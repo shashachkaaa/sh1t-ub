@@ -34,16 +34,21 @@ class CloudDatabase:
     async def find_data_chat(self):
         """Информация о чате с данными"""
         if not self.data_chat:
-            chat = [
-                dialog.chat async for dialog in self._app.iter_dialogs()
-                if dialog.chat.title == f"sh1t-{self._me.id}-data"
-                and dialog.chat.type == "supergroup"
-            ]
+            chat = None
+
+        # Используем async for для итерации по диалогам
+            async for dialog in self._app.get_dialogs():
+                if (
+                    dialog.chat.title == f"sh1t-{self._me.id}-data"
+                    and dialog.chat.type == "supergroup"
+                ):
+                    chat = dialog.chat
+                    break
 
             if not chat:
                 self.data_chat = await self._app.create_supergroup(f"sh1t-{self._me.id}-data")
             else:
-                self.data_chat = chat[0]
+                self.data_chat = chat
 
         return self.data_chat
 
