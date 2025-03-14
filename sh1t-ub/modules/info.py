@@ -23,7 +23,7 @@ from aiogram.types import (
     InlineQuery,
     InputTextMessageContent,
     InlineQueryResultArticle,
-    InlineKeyboardMarkup,
+    InlineKeyboardBuilder,
     InlineKeyboardButton,
     CallbackQuery
 )
@@ -32,22 +32,22 @@ from pyrogram import Client, types
 from .. import loader, utils, __version__
 
 
-INFO_MARKUP = InlineKeyboardMarkup().add(
-    InlineKeyboardButton("◀️ Назад", callback_data="info")
-)
+INFO_MARKUP = InlineKeyboardBuilder()
+bback = InlineKeyboardButton("◀️ Назад", callback_data="info")
+INFO_MARKUP.row(bback)
 
-INFO_SERVER_MARKUP = InlineKeyboardMarkup().add(
-    InlineKeyboardButton("ℹ️ Информация о сервере", callback_data="info_server")
-)
+INFO_SERVER_MARKUP = InlineKeyboardBuilder()
+binfo = InlineKeyboardButton("ℹ️ Информация о сервере", callback_data="info_server")
+INFO_SERVER_MARKUP.row(binfo)
 
 
 def humanize(num: float, suffix: str = "B") -> str:
-    for unit in ["B", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"]:
-        if abs(num) < 1024.0:
+    for unit in ["", "K", "M", "G", "T", "P", "E", "Z"]:
+        if abs(num) < 1000.0:
             return "%3.1f%s%s" % (num, unit, suffix)
-        num /= 1024.0
+        num /= 1000.0
 
-    return "%.1f%s%s" % (num, "Yi", suffix)
+    return "%.1f%s%s" % (num, "Y", suffix)
 
 
 def get_info_message(me: types.User):
@@ -137,7 +137,7 @@ class InformationMod(loader.Module):
                     title="Информация",
                     input_message_content=message,
                     reply_markup=(
-                        INFO_SERVER_MARKUP
+                        INFO_SERVER_MARKUP.as_markup()
                         if inline_query.from_user.id == self.all_modules.me.id
                         else None
                     ),
@@ -158,7 +158,7 @@ class InformationMod(loader.Module):
         return await self.bot.edit_message_text(
             inline_message_id=call.inline_message_id,
             text=get_info_message(self.all_modules.me),
-            reply_markup=INFO_SERVER_MARKUP
+            reply_markup=INFO_SERVER_MARKUP.as_markup()
         )
 
     @loader.on_bot(lambda self, app, call: call.data == "info_server")
@@ -185,5 +185,5 @@ class InformationMod(loader.Module):
         return await self.bot.edit_message_text(
             inline_message_id=call.inline_message_id,
             text=message,
-            reply_markup=INFO_MARKUP
+            reply_markup=INFO_MARKUP.as_markup()
         )
