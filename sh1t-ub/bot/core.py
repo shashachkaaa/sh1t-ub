@@ -1,24 +1,11 @@
-#    Sh1t-UB (telegram userbot by sh1tn3t)
-#    Copyright (C) 2021-2022 Sh1tN3t
-
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 import logging
 import asyncio
 import sys
 
-from aiogram import Bot, Dispatcher, exceptions
+from aiogram import Bot, Dispatcher
+from aiogram.exceptions import TelegramAPIError, TelegramUnauthorizedError
+from aiogram.enums import ParseMode
+from aiogram.client.default import DefaultBotProperties
 from pyrogram import Client
 
 from typing import Union, NoReturn
@@ -73,8 +60,8 @@ class BotManager(
             self._db.set("sh1t-ub.bot", "token", self._token)
 
         try:
-            self.bot = Bot(self._token, parse_mode="html")
-        except (exceptions.ValidationError, exceptions.Unauthorized):
+            self.bot = Bot(token=self._token, default=DefaultBotProperties(parse_mode='html'))
+        except (TelegramAPIError, TelegramUnauthorizedError):  # Используем доступные исключения
             logging.error("Неверный токен. Попытка создать новый токен...")
             result = await self._revoke_token()
             if not result:
@@ -86,21 +73,13 @@ class BotManager(
                 self._db.set("sh1t-ub.bot", "token", self._token)
                 return await self.load()
 
-        self._dp = Dispatcher(self.bot)
+        self._dp = Dispatcher()
 
-        self._dp.register_message_handler(
-            self._message_handler, lambda _: True,
-            content_types=["any"]
-        )
-        self._dp.register_inline_handler(
-            self._inline_handler, lambda _: True
-        )
-        self._dp.register_callback_query_handler(
-            self._callback_handler, lambda _: True
-        )
+        self._dp.message.register(self._message_handler)
+        self._dp.inline_query.register(self._inline_handler)
+        self._dp.callback_query.register(self._callback_handler)
 
-        asyncio.ensure_future(
-            self._dp.start_polling())
+        asyncio.create_task(self._dp.start_polling(self.bot))
 
         self.bot.manager = self
 
