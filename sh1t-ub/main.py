@@ -32,20 +32,14 @@ async def main():
     await modules.load(app)
 
     if (restart := db.get("sh1t-ub.loader", "restart")):
-        msg = await app.get_messages(*map(int, restart["msg"].split(":")))
-        if (
-            not msg.empty
-            and msg.text != (
-                restarted_text := (
-                    "✅ Перезагрузка прошла успешно!"
-                    if restart["type"] == "restart"
-                    else "✅ Обновление прошло успешно!"
-                )
-            )
-        ):
-            await msg.edit(restarted_text)
-
-        db.pop("sh1t-ub.loader", "restart")
+            try:
+            	text = "✅ Перезагрузка прошла успешно!" if restart["type"] == "restart" else "✅ Обновление прошло успешно!"
+            	id = restart["msg"].split(":")
+            	await app.edit_message_text(id[0], id[1], text)
+            except:
+            	pass
+            
+            db.pop("sh1t-ub.loader", "restart")
 
     prefix = db.get("sh1t-ub.loader", "prefixes", ["."])[0]
     bot_info = await modules.bot_manager.bot.me()
