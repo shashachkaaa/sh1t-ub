@@ -31,7 +31,6 @@ from . import __version__
 
 Session.notice_displayed = True
 
-
 def colored_input(prompt: str = "", hide: bool = False) -> str:
     """Цветной инпут"""
     frame = sys._getframe(1)
@@ -51,21 +50,32 @@ class Auth:
     def __init__(self, session_name: str = "../sh1t-ub") -> None:
         self._check_api_tokens()
         self.app = Client(
-            session_name=session_name, config_file="./config.ini",
-            parse_mode="html", app_version=f"Sh1t-UB v{__version__}"
+            name=session_name,  # Используем name вместо session_name
+            api_id=self.api_id,  # Передаем api_id напрямую
+            api_hash=self.api_hash,  # Передаем api_hash напрямую
+            app_version=f"Sqirtuoz",
+            device_model="TECNO POVA 5",
+            system_version="Android 14",
+            lang_pack="ru"
         )
 
     def _check_api_tokens(self) -> bool:
         """Проверит установлены ли токены, если нет, то начинает установку"""
         config = configparser.ConfigParser()
         if not config.read("./config.ini"):
+            self.api_id = colored_input("Введи API ID: ")
+            self.api_hash = colored_input("Введи API hash: ")
+
             config["pyrogram"] = {
-                "api_id": colored_input("Введи API ID: "),
-                "api_hash": colored_input("Введи API hash: ")
+                "api_id": self.api_id,
+                "api_hash": self.api_hash
             }
 
             with open("./config.ini", "w") as file:
                 config.write(file)
+        else:
+            self.api_id = config["pyrogram"]["api_id"]
+            self.api_hash = config["pyrogram"]["api_hash"]
 
         return True
 

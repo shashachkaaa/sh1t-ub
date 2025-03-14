@@ -128,21 +128,20 @@ class Conversation:
     async def get_response(self, timeout: int = 30) -> types.Message:
         """Возвращает ответ
 
-        Параметр:
-            timeout (``int``, optional):
+            Параметр:
+                timeout (``int``, optional):
                 Время ожидания ответа
         """
-        responses = await self.app.get_history(self.chat_id, limit=1)
-        while responses[0].from_user.is_self:
+        while timeout > 0:
+            async for message in self.app.get_chat_history(self.chat_id, limit=1):  # Используем асинхронный генератор
+                if not message.from_user.is_self:  # Проверяем, что сообщение не от самого себя
+                    self.messagee_to_purge.append(message)
+                    return message
+
             timeout -= 1
-            if not timeout:
-                raise RuntimeError("Истекло время ожидания ответа")
-
             await asyncio.sleep(1)
-            responses = await self.app.get_history(self.chat_id, limit=1)
 
-        self.messagee_to_purge.append(responses[0])
-        return responses[0]
+        raise RuntimeError("Истекло время ожидания ответа")
 
     async def _purge(self) -> bool:
         """Удалить все отправленные и полученные сообщения"""
