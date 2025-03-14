@@ -34,11 +34,11 @@ from .. import loader, utils, __version__
 
 
 INFO_MARKUP = InlineKeyboardBuilder()
-bback = InlineKeyboardButton("◀️ Назад", callback_data="info")
+bback = InlineKeyboardButton(text="◀️ Назад", callback_data="info")
 INFO_MARKUP.row(bback)
 
 INFO_SERVER_MARKUP = InlineKeyboardBuilder()
-binfo = InlineKeyboardButton("ℹ️ Информация о сервере", callback_data="info_server")
+binfo = InlineKeyboardButton(text="ℹ️ Информация о сервере", callback_data="info_server")
 INFO_SERVER_MARKUP.row(binfo)
 
 
