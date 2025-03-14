@@ -23,10 +23,11 @@ from aiogram.types import (
     InlineQuery,
     InputTextMessageContent,
     InlineQueryResultArticle,
-    InlineKeyboardBuilder,
+    InlineKeyboardMarkup,
     InlineKeyboardButton,
     CallbackQuery
 )
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from pyrogram import Client, types
 from .. import loader, utils, __version__
