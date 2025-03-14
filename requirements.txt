@@ -1,5 +1,5 @@
 aiogram
-pyrogram==1.4.12
+kurigram
 tgcrypto
 loguru
 lightdb
