@@ -50,18 +50,19 @@ class EvaluatorMod(loader.Module):
             )
         except Exception:
             return await utils.answer(
-                message, f"<b>[{'eval' if return_it else 'exec'}] Не удалось выполнить выражение:</b>\n"
-                         f"<code>{args}</code>\n\n"
-                         f"<b>Ошибка:</b>\n"
-                         f"<code>{html.escape(traceback.format_exc())}</code>"
+                message, f"""<emoji id=5339181821135431228>💻</emoji> <b>Код:</b>
+<code>{args}</code>
+
+<emoji id=5210952531676504517>❌</emoji> <b>Вывод:</b>
+<code>{html.escape(traceback.format_exc())}</code>"""
             )
 
         if return_it:
-            output = (
-                f"<b>[eval] Выполненное выражение:</b>\n"
-                f"<code>{args}</code>\n\n"
-                f"<b>Возвращено:</b>\n"
-                f"<code>{result}"
+            output = (f"""<emoji id=5339181821135431228>💻</emoji> <b>Код:</b>
+<code>{args}</code>
+
+<emoji id=5175061663237276437>🐍</emoji> <b>Вывод:</b>
+<code>{result}</code>"""
             )
             outputs = [output[i: i + 4083] for i in range(0, len(output), 4083)]
 
@@ -78,5 +79,6 @@ class EvaluatorMod(loader.Module):
             "chat": message.chat,
             "user": message.from_user,
             "reply": message.reply_to_message,
+            "r": message.reply_to_message,
             "ruser": getattr(message.reply_to_message, "from_user", None)
         }
