@@ -88,9 +88,9 @@ class DispatcherManager:
         except Exception as error:
             logging.exception(error)
             await utils.answer(
-                message, f"❌ Произошла ошибка при выполнении команды.\n"
-                         f"Запрос был: <code>{message.text}</code>\n"
-                         f"Подробности можно найти в <code>{prefix}logs</code>"
+                message, f"<emoji id=5210952531676504517>❌</emoji> <b>Произошла ошибка при выполнении команды.</b>\n"
+                         f"<b>Запрос:</b> <code>{message.text}</code>\n"
+                         f"<b>Подробности можно найти в</b> <code>{prefix}logs</code>"
             )
 
         return message
