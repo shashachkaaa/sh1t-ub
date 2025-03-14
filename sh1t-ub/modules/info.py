@@ -117,7 +117,7 @@ class InformationMod(loader.Module):
     async def info_cmd(self, app: Client, message: types.Message):
         """Вызывает инлайн-команду info. Использование: info"""
         bot_results = await app.get_inline_bot_results(
-            (await self.bot.me).username, "info")
+            (await self.bot.me()).username, "info")
 
         await app.send_inline_bot_result(
             message.chat.id, bot_results.query_id,
