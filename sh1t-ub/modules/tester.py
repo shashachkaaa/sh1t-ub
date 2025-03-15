@@ -34,7 +34,7 @@ class TesterMod(loader.Module):
         m = await utils.answer(message, f"<emoji id=5463408862499466706>😎</emoji>")
         if m:
         	b = time.time()
-        	return await utils.answer(message, f'<emoji id=5463408862499466706>😎</emoji> Пинг: <b>{round((b - a) * 1000, 3)}</b> ms)
+        	return await utils.answer(message, f'<emoji id=5463408862499466706>😎</emoji> Пинг: <b>{round((b - a) * 1000, 3)}</b> ms')
 
     async def logs_cmd(self, app: Client, message: types.Message, args: str):
         """Отправляет логи. Использование: logs <уровень>"""
