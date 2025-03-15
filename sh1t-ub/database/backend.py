@@ -19,6 +19,8 @@ import asyncio
 from pyrogram import Client, types
 from typing import Union
 
+from .. import utils
+
 
 class CloudDatabase:
     """Чат в Telegram с данными для базы данных"""
@@ -37,8 +39,7 @@ class CloudDatabase:
            # Используем async for для итерации по диалогам
            async for dialog in self._app.get_dialogs():
                if (
-                   dialog.chat.title == f"sh1t-{self._me.id}-data"
-                   and dialog.chat.type == "supergroup"
+                   str(dialog.chat.title) == f"sh1t-{self._me.id}-data"
                ):
                    self.data_chat = dialog.chat  # <-- Сохраняем найденный чат
                    break
@@ -46,6 +47,7 @@ class CloudDatabase:
         # Если чат не найден, создаем новый
            if not self.data_chat:
                self.data_chat = await self._app.create_supergroup(f"sh1t-{self._me.id}-data")
+               await self._app.send_message(self.data_chat.id, f"""<emoji id=5323374172527682441>ℹ️</emoji> Этот чат используется для <b>хранения информации</b> нужной юзерботу. Просьба <b>не трогать</b> этот чат для корректной работы юзербота!""")
 
        return self.data_chat
 
