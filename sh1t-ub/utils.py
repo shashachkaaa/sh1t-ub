@@ -16,19 +16,79 @@
 
 import random
 import string
+import logging
+import os
 
 import asyncio
 import functools
 
 from pyrogram.types import Message, User, Chat
 from pyrogram.file_id import FileId, PHOTO_TYPES
+from fuzzywuzzy import process
 
 from types import FunctionType
 from typing import Any, List, Literal, Tuple, Union
 
 from . import database
 
+import os
+from fuzzywuzzy import process
 
+def get_module_name_in_modules(self, message: Message):
+    module_name = message.text.split()[1]
+    
+    module_names = [module.__class__.__name__.replace("Mod", "") for module in self.all_modules.modules]
+    
+    matches = process.extract(module_name, module_names, limit=3)
+    
+    best_module_name = []
+    
+    if matches[0][1] < 100:
+        for best in matches:
+            best_module_name.append(best[0])
+    
+    try:
+        module_name = best_module_name[0]
+        text = '<emoji id=5312383351217201533>⚠️</emoji> <b>Точного совпадения не найдено, поэтому применен ближайший результат</b>'
+    except:
+        module_name = message.text.split()[1]
+        text = ''
+    
+    return module_name, text
+
+def get_module_name(message: Message):
+    module_name = message.text.split()[1]
+    
+    modules_dir = "sh1t-ub/modules"
+    
+    try:
+        module_files = [
+            f for f in os.listdir(modules_dir)
+            if f.endswith(".py") and not f.startswith("_")
+        ]
+    except FileNotFoundError:
+        return None, "<emoji id=5210952531676504517>❌</emoji> <b>Папка modules не найдена</b>"
+    
+    module_names = [os.path.splitext(f)[0] for f in module_files]
+    
+    matches = process.extract(module_name, module_names, limit=3)
+    
+    best_module_name = []
+    
+    if matches[0][1] < 100:
+        for best in matches:
+            best_module_name.append(best[0])
+    
+    try:
+        module_name = best_module_name[0]
+        text = '<emoji id=5312383351217201533>⚠️</emoji> <b>Точного совпадения не найдено, поэтому применен ближайший результат</b>'
+    except:
+        #module_name = message.text.split()[1]
+        module_name = matches[0][0]
+        text = ''
+    
+    return module_name, text
+    
 def get_full_command(message: Message) -> Union[
     Tuple[Literal[""], Literal[""], Literal[""]], Tuple[str, str, str]
 ]:
@@ -59,37 +119,21 @@ async def answer(
     message: Union[Message, List[Message]],
     response: Union[str, Any],
     chat_id: Union[str, int] = None,
-    doc: bool = False,
+    document: bool = False,
     photo: bool = False,
+    animation: bool = False,
+    video: bool = False,
+    caption: str = None,
+    disable_web_page_preview=False,
     **kwargs
 ) -> List[Message]:
-    """В основном это обычный message.edit, но:
-        - Если содержание сообщения будет больше лимита (4096 символов),
-            то отправится несколько разделённых сообщений
-        - Работает message.reply, если команду вызвал не владелец аккаунта
 
-    Параметры:
-        message (``pyrogram.types.Message`` | ``typing.List[pyrogram.types.Message]``):
-            Сообщение
-
-        response (``str`` | ``typing.Any``):
-            Текст или объект которое нужно отправить
-
-        chat_id (``str`` | ``int``, optional):
-            Чат, в который нужно отправить сообщение
-
-        doc/photo (``bool``, optional):
-            Если ``True``, сообщение будет отправлено как документ/фото или по ссылке
-
-        kwargs (``dict``, optional):
-            Параметры отправки сообщения
-    """
     messages: List[Message] = []
 
     if isinstance(message, list):
         message = message[0]
 
-    if isinstance(response, str) and all(not arg for arg in [doc, photo]):
+    if isinstance(response, str) and all(not arg for arg in [document, photo, animation, video]):
         outputs = [
             response[i: i + 4096]
             for i in range(0, len(response), 4096)
@@ -100,6 +144,7 @@ async def answer(
                 await message._client.send_message(
                     chat_id, outputs[0], **kwargs)
             )
+            await message.delete()
         else:
             messages.append(
                 await (
@@ -113,27 +158,57 @@ async def answer(
                 await messages[0].reply(output, **kwargs)
             )
 
-    elif doc:
+    elif document:
         if chat_id:
             messages.append(
                 await message._client.send_document(
-                    chat_id, response, **kwargs)
+                    chat_id, response, caption=caption, **kwargs)
             )
+            await message.delete()
         else:
             messages.append(
-                await message.reply_document(response, **kwargs)
+                await message.reply_document(response, caption=caption, **kwargs)
             )
+            await message.delete()
 
     elif photo:
         if chat_id:
             messages.append(
                 await message._client.send_photo(
-                    chat_id, response, **kwargs)
+                    chat_id, response, caption=caption, **kwargs)
             )
+            await message.delete()
         else:
             messages.append(
-                await message.reply_photo(response, **kwargs)
+                await message.reply_photo(response, caption=caption, **kwargs)
             )
+            await message.delete()
+
+    elif animation:
+        if chat_id:
+            messages.append(
+                await message._client.send_animation(
+                    chat_id, response, caption=caption, **kwargs)
+            )
+            await message.delete()
+        else:
+            messages.append(
+                await message.reply_animation(response, caption=caption, **kwargs)
+            )
+            await message.delete()
+
+    elif video:
+        if chat_id:
+            messages.append(
+                await message._client.send_video(
+                    chat_id, response, caption=caption, **kwargs)
+            )
+            await message.delete()
+        else:
+            messages.append(
+                await message.reply_video(response, caption=caption, **kwargs)
+            )
+            await message.delete()
 
     return messages
 
