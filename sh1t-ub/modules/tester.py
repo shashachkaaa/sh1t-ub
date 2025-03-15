@@ -37,7 +37,7 @@ class TesterMod(loader.Module):
 
         for _ in range(count):
             start = datetime.now()
-            msg = await app.send_message("me", "ping?")
+            msg = await utils.answer(message, "<emoji id=5463408862499466706>😎</emoji>")
             ms = (datetime.now() - start).microseconds / 1000
 
             ping_data.append(ms)
@@ -45,7 +45,7 @@ class TesterMod(loader.Module):
 
         ping = sum(ping_data) / len(ping_data)
 
-        await utils.answer(message, f"[ok] {str(ping)[:5]}ms")
+        await utils.answer(message, f"<emoji id=5456140674028019486>⚡️</emoji> <b>Пинг:</b> <code>{str(ping)[:6]}</code> ms")
         for msg in ping_msg:
             await msg.delete()
 
