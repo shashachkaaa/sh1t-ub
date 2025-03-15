@@ -1,6 +1,8 @@
 import os
 import re
 import sys
+import asyncio
+import atexit
 
 from git import Repo
 from git.exc import GitCommandError
