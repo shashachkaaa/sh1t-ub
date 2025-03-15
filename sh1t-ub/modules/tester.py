@@ -51,7 +51,7 @@ class TesterMod(loader.Module):
                 message, f"❕ Нет логов на уровне {lvl} ({logging.getLevelName(lvl)})")
 
         logs = io.BytesIO(logs)
-        logs.name = "sh1t-ub.log"
+        logs.name = "sh1t-ub.txt"
 
         await message.delete()
         return await utils.answer(

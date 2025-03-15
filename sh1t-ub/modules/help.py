@@ -18,6 +18,12 @@ from pyrogram import Client, types
 from .. import loader, utils, __version__
 
 
+from bs4 import BeautifulSoup
+
+def sanitize_html(text: str) -> str:
+    """Очищает HTML-текст, закрывая незакрытые теги."""
+    return BeautifulSoup(text, "html.parser").prettify()
+
 @loader.module(name="Help", author="sh1tn3t")
 class HelpMod(loader.Module):
     """Помощь по командам юзербота"""
@@ -47,7 +53,7 @@ class HelpMod(loader.Module):
 
             return await utils.answer(
                 message, f"<b>🛠 Всего модулей: {len(self.all_modules.modules)}</b>\n"
-                         f"{text}"
+                        f"{text}"
             )
 
         if not (module := self.all_modules.get_module(args)):
@@ -59,23 +65,23 @@ class HelpMod(loader.Module):
 
         command_descriptions = "\n".join(
             f"👉 <code>{prefix + command}</code>\n"
-            f"    ╰ {module.command_handlers[command].__doc__ or 'Нет описания для команды'}"
+            f"    ╰ {sanitize_html(module.command_handlers[command].__doc__ or 'Нет описания для команды')}"
             for command in module.command_handlers
         )
         inline_descriptions = "\n".join(
             f"👉 <code>@{bot_username + ' ' + command}</code>\n"
-            f"    ╰ {module.inline_handlers[command].__doc__ or 'Нет описания для команды'}"
+            f"    ╰ {sanitize_html(module.inline_handlers[command].__doc__ or 'Нет описания для команды')}"
             for command in module.inline_handlers
         )
 
         header = (
             f"<b>🖥 Модуль:</b> <code>{module.name}</code>\n" + (
-                f"<b>👨🏿‍💻 Автор:</b> <code>{module.author}</code>\n" if module.author else ""
+                f"<b>👨🏿‍💻 Автор:</b> <code>{sanitize_html(module.author)}</code>\n" if module.author else ""
             ) + (
-                f"<b>🔢 Версия:</b> <code>{module.version}</code>\n" if module.version else ""
+                f"<b>🔢 Версия:</b> <code>{sanitize_html(module.version)}</code>\n" if module.version else ""
             ) + (
                 f"\n<b>📄 Описание:</b>\n"
-                f"    ╰ {module.__doc__ or 'Нет описания для модуля'}\n\n"
+                f"    ╰ {sanitize_html(module.__doc__ or 'Нет описания для модуля')}\n\n"
             )
         )
 
