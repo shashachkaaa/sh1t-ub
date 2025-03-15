@@ -77,8 +77,8 @@ class LoaderMod(loader.Module):
         api_result = await get_git_raw_link(modules_repo)
         if not api_result:
             return await utils.answer(
-                message, "❌ Неверная ссылка на репозиторий.\n"
-                         "Поменяй её с помощью команды: dlrepo <ссылка на репозиторий или reset>"
+                message, "<emoji id=5210952531676504517>❌</emoji> <b>Неверная ссылка на репозиторий!</b>\n"
+                         "<b>Поменяй её с помощью команды: <code>dlrepo</code> (ссылка на репозиторий или <code>reset</code>)</b>"
             )
 
         raw_link = api_result
@@ -86,8 +86,8 @@ class LoaderMod(loader.Module):
         if modules.status_code != 200:
             return await utils.answer(
                 message, (
-                    f"❌ В <a href=\"{modules_repo}\">репозитории</a> не найден файл all.txt\n"
-                    f"Пример: https://github.com/sh1tn3t/sub-modules/blob/main/all.txt"
+                    f"<emoji id=5210952531676504517>❌</emoji> В <a href=\"{modules_repo}\">репозитории</a> <b>не найден файл all.txt</b>\n"
+                    f"<b>Пример:</b> https://github.com/sh1tn3t/sub-modules/blob/main/all.txt"
                 ), disable_web_page_preview=True
             )
 
@@ -95,8 +95,8 @@ class LoaderMod(loader.Module):
 
         if not args:
             text = (
-                f"📥 Список доступных модулей с <a href=\"{modules_repo}\">репозитория</a>:\n\n"
-                + "<code>all</code> - загрузит все модули\n"
+                f"📥 <b>Список доступных модулей с</b> <a href=\"{modules_repo}\">репозитория</a>:\n\n"
+                + "<code>all</code> - <b>загрузит все модули</b>\n"
                 + "\n".join(
                     map("<code>{}</code>".format, modules))
             )
@@ -134,16 +134,16 @@ class LoaderMod(loader.Module):
 
                 module_name = await self.all_modules.load_module(r.text, r.url)
                 if module_name is True:
-                    error_text = "✅ Зависимости установлены. Требуется перезагрузка"
+                    error_text = "<emoji id=5206607081334906820>✔️</emoji> <b>Зависимости установлены. Требуется перезагрузка</b>"
 
                 if not module_name:
-                    error_text = "❌ Не удалось загрузить модуль. Подробности смотри в логах"
+                    error_text = "<emoji id=5210952531676504517>❌</emoji> <b>Не удалось загрузить модуль. Подробности смотри в логах</b>"
             except requests.exceptions.MissingSchema:
-                error_text = "❌ Ссылка указана неверно"
+                error_text = "<emoji id=5210952531676504517>❌</emoji> <b>Ссылка указана неверно</b>"
             except requests.exceptions.ConnectionError:
-                error_text = "❌ Модуль недоступен по ссылке"
+                error_text = "<emoji id=5210952531676504517>❌</emoji> <b>Модуль недоступен по ссылке</b>"
             except requests.exceptions.RequestException:
-                error_text = "❌ Произошла непредвиденная ошибка. Подробности смотри в логах"
+                error_text = "<emoji id=5210952531676504517>❌</emoji> <b>Произошла непредвиденная ошибка. Подробности смотри в логах</b>"
 
             if error_text:
                 return await utils.answer(message, error_text)
@@ -153,9 +153,9 @@ class LoaderMod(loader.Module):
 
         return await utils.answer(
             message, (
-                f"✅ Модуль \"<code>{module_name}</code>\" загружен"
+                f"<emoji id=5206607081334906820>✔️</emoji> <b>Модуль \"<code>{module_name}</code>\" загружен</b>"
                 if args != "all"
-                else f"✅ Загружено <b>{count}</b> из <b>{len(modules)}</b> модулей"
+                else f"✅ <b>Загружено <code>{count}</code> из <code>{len(modules)}</code> модулей</b>"
             )
         )
 
@@ -172,7 +172,7 @@ class LoaderMod(loader.Module):
 
         if not file:
             return await utils.answer(
-                message, "❌ Нет реплая на файл")
+                message, "<emoji id=5210952531676504517>❌</emoji> <b>Необходим ответ на файл</b>")
 
         temp_file = tempfile.NamedTemporaryFile("w")
         await file.download(temp_file.name)
@@ -183,91 +183,35 @@ class LoaderMod(loader.Module):
         except UnicodeDecodeError:
             temp_file.close()
             return await utils.answer(
-                message, "❌ Неверная кодировка файла")
+                message, "<emoji id=5210952531676504517>❌</emoji> <b>Неверная кодировка файла</b>")
 
         module_name = await self.all_modules.load_module(module_source)
         if module_name is True:
             return await utils.answer(
-                message, "✅ Зависимости установлены. Требуется перезагрузка")
+                message, "<emoji id=5206607081334906820>✔️</emoji> <b>Зависимости установлены. Требуется перезагрузка</b>")
 
         if not module_name:
             return await utils.answer(
-                message, "❌ Не удалось загрузить модуль. Подробности смотри в логах")
+                message, "<emoji id=5210952531676504517>❌</emoji> <b>Не удалось загрузить модуль. Подробности смотри в логах</b>")
 
         temp_file.close()
         return await utils.answer(
-            message, f"✅ Модуль \"<code>{module_name}</code>\" загружен")
+            message, f"<emoji id=5206607081334906820>✔️</emoji> <b>Модуль \"<code>{module_name}</code>\" загружен</b>")
 
     async def unloadmod_cmd(self, app: Client, message: types.Message, args: str):
         """Выгрузить модуль. Использование: unloadmod <название модуля>"""
         if not (module_name := self.all_modules.unload_module(args)):
             return await utils.answer(
-                message, "❌ Неверное название модуля")
+                message, "<emoji id=5210952531676504517>❌</emoji> <b>Неверное название модуля</b>")
 
         return await utils.answer(
-            message, f"✅ Модуль \"<code>{module_name}</code>\" выгружен")
-
-    async def restart_cmd(self, app: Client, message: types.Message, update: bool = False):
-        """Перезагрузка юзербота"""
-        def restart() -> None:
-            """Запускает загрузку юзербота"""
-            if "LAVHOST" in os.environ:
-                os.system("lavhost restart")
-            else:
-                os.execl(sys.executable, sys.executable, "-m", "sh1t-ub")
-
-        atexit.register(restart)
-        self.db.set(
-            "sh1t-ub.loader", "restart", {
-                "msg": f"{message.chat.id}:{message.message_id}",
-                "type": "restart" if not update else "update"
-            }
-        )
-
-        await utils.answer(message, "🔁 Перезагрузка...")
-
-        logging.info("Перезагрузка...")
-        return sys.exit(0)
-
-    async def update_cmd(self, app: Client, message: types.Message):
-        """Обновление юзербота"""
-        await utils.answer(message, "🔃 Обновление...")
-
-        if "LAVHOST" in os.environ:
-            os.system("lavhost update")
-        else:
-            repo = Repo(".")
-            origin = repo.remote("origin")
-
-            try:
-                origin.pull()
-            except GitCommandError:
-                repo.git.reset("--hard")
-                return await self.update_cmd(app, message)
-
-            pip = await asyncio.create_subprocess_exec(
-                sys.executable,
-                "-m",
-                "pip",
-                "install",
-                "-r",
-                "requirements.txt",
-                "--user",
-            )
-
-            result = await pip.wait()
-            if result != 0:
-                await utils.answer(
-                    message, "❌ Ошибка при установке зависимостей. Подробности смотри в логах")
-                return sys.exit(1)
-
-        return await self.restart_cmd(app, message, True)
+            message, f"<emoji id=5206607081334906820>✔️</emoji> <b>Модуль \"<code>{module_name}</code>\" выгружен</b>")
 
     async def dlrepo_cmd(self, app: Client, message: types.Message, args: str):
         """Установить репозиторий с модулями. Использование: dlrepo <ссылка на репозиторий или reset>"""
         if not args:
             return await utils.answer(
-                message, "❌ Нет аргументов")
+                message, "<emoji id=5210952531676504517>❌</emoji> <b>Нет аргументов</b>")
 
         if args == "reset":
             self.db.set(
@@ -275,12 +219,12 @@ class LoaderMod(loader.Module):
                 "https://github.com/sh1tn3t/sub-modules"
             )
             return await utils.answer(
-                message, "✅ Ссылка на репозиторий была сброшена")
+                message, "<emoji id=5206607081334906820>✔️</emoji> <b>Ссылка на репозиторий была сброшена</b>")
 
         if not await get_git_raw_link(args):
             return await utils.answer(
-                message, "❌ Ссылка указана неверно")
+                message, "<emoji id=5210952531676504517>❌</emoji> <b>Ссылка указана неверно</b>")
 
         self.db.set("sh1t-ub.loader", "repo", args)
         return await utils.answer(
-            message, "✅ Ссылка на репозиторий установлена")
+            message, "<emoji id=5206607081334906820>✔️</emoji> <b>Ссылка на репозиторий установлена</b>")
