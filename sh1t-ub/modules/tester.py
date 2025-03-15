@@ -30,18 +30,17 @@ class TesterMod(loader.Module):
     async def ping_cmd(self, app: Client, message: types.Message, args: str):
         """Пингует"""
         count = 5
-        num = 0
         ping_msg, ping_data = [], []
 
         if args and args.isdigit():
             count = int(args)
-
+        
+        await utils.answer(message, f"<emoji id=5463408862499466706>😎</emoji> {num}")
+        
         for _ in range(count):
             start = datetime.now()
-            num += 1
-            msg = await utils.answer(message, f"<emoji id=5463408862499466706>😎</emoji> {num}")
             ms = (datetime.now() - start).microseconds / 1000
-
+            msg = await app.send_message("me", "ping?")
             ping_data.append(ms)
             ping_msg.append(msg)
 
