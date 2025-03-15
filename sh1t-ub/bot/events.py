@@ -64,11 +64,10 @@ class Events(Item):
             commands = ""
             for command, func in self._all_modules.inline_handlers.items():
                 if await self._check_filters(func, func.__self__, inline_query):
-                    commands += f"\n💬 <code>@{(await self.bot.me).username} {command}</code>"
+                    commands += f"\n💬 <code>@{(await self.bot.me()).username} {command}</code>"
 
             message = InputTextMessageContent(
-                f"👇 <b>Доступные команды</b>\n"
-                f"{commands}"
+                message_text=f"👇 <b>Доступные команды</b>\n{commands}"
             )
 
             return await inline_query.answer(
@@ -95,7 +94,8 @@ class Events(Item):
                         id=utils.random_id(),
                         title="Ошибка",
                         input_message_content=InputTextMessageContent(
-                            "❌ Такой инлайн-команды нет"),
+                            message_text="❌ Такой инлайн-команды нет"
+                        ),
                         thumb_url="https://api.fl1yd.su/emoji/274c.png"
                     )
                 ], cache_time=0
