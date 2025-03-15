@@ -7,3 +7,4 @@ gitpython
 meval
 requests
 psutil
+fuzzywuzzy
