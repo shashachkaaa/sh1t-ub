@@ -64,100 +64,9 @@ async def get_git_raw_link(repo_url: str):
     return f"https://raw.githubusercontent.com{repo_path}/{branch}{path or ''}/"
 
 
-@loader.module(name="Loader", author="sh1tn3t")
+@loader.module(name="Loader", author="sh1tn3t | shashachkaaa")
 class LoaderMod(loader.Module):
     """Загрузчик модулей"""
-
-    async def dlmod_cmd(self, app: Client, message: types.Message, args: str):
-        """Загрузить модуль по ссылке. Использование: dlmod <ссылка или all или ничего>"""
-        modules_repo = self.db.get(
-            "sh1t-ub.loader", "repo",
-            "https://github.com/sh1tn3t/sub-modules"
-        )
-        api_result = await get_git_raw_link(modules_repo)
-        if not api_result:
-            return await utils.answer(
-                message, "<emoji id=5210952531676504517>❌</emoji> <b>Неверная ссылка на репозиторий!</b>\n"
-                         "<b>Поменяй её с помощью команды: <code>dlrepo</code> (ссылка на репозиторий или <code>reset</code>)</b>"
-            )
-
-        raw_link = api_result
-        modules = await utils.run_sync(requests.get, raw_link + "all.txt")
-        if modules.status_code != 200:
-            return await utils.answer(
-                message, (
-                    f"<emoji id=5210952531676504517>❌</emoji> В <a href=\"{modules_repo}\">репозитории</a> <b>не найден файл all.txt</b>\n"
-                    f"<b>Пример:</b> https://github.com/sh1tn3t/sub-modules/blob/main/all.txt"
-                ), disable_web_page_preview=True
-            )
-
-        modules: List[str] = modules.text.splitlines()
-
-        if not args:
-            text = (
-                f"📥 <b>Список доступных модулей с</b> <a href=\"{modules_repo}\">репозитория</a>:\n\n"
-                + "<code>all</code> - <b>загрузит все модули</b>\n"
-                + "\n".join(
-                    map("<code>{}</code>".format, modules))
-            )
-            return await utils.answer(
-                message, text, disable_web_page_preview=True)
-
-        error_text: str = None
-        module_name: str = None
-        count = 0
-
-        if args == "all":
-            for module in modules:
-                module = raw_link + module + ".py"
-                try:
-                    r = await utils.run_sync(requests.get, module)
-                    if r.status_code != 200:
-                        raise requests.exceptions.RequestException
-                except requests.exceptions.RequestException:
-                    continue
-
-                if not (module_name := await self.all_modules.load_module(r.text, r.url)):
-                    continue
-
-                self.db.set("sh1t-ub.loader", "modules",
-                            list(set(self.db.get("sh1t-ub.loader", "modules", []) + [module])))
-                count += 1
-        else:
-            if args in modules:
-                args = raw_link + args + ".py"
-
-            try:
-                r = await utils.run_sync(requests.get, args)
-                if r.status_code != 200:
-                    raise requests.exceptions.ConnectionError
-
-                module_name = await self.all_modules.load_module(r.text, r.url)
-                if module_name is True:
-                    error_text = "<emoji id=5206607081334906820>✔️</emoji> <b>Зависимости установлены. Требуется перезагрузка</b>"
-
-                if not module_name:
-                    error_text = "<emoji id=5210952531676504517>❌</emoji> <b>Не удалось загрузить модуль. Подробности смотри в логах</b>"
-            except requests.exceptions.MissingSchema:
-                error_text = "<emoji id=5210952531676504517>❌</emoji> <b>Ссылка указана неверно</b>"
-            except requests.exceptions.ConnectionError:
-                error_text = "<emoji id=5210952531676504517>❌</emoji> <b>Модуль недоступен по ссылке</b>"
-            except requests.exceptions.RequestException:
-                error_text = "<emoji id=5210952531676504517>❌</emoji> <b>Произошла непредвиденная ошибка. Подробности смотри в логах</b>"
-
-            if error_text:
-                return await utils.answer(message, error_text)
-
-            self.db.set("sh1t-ub.loader", "modules",
-                        list(set(self.db.get("sh1t-ub.loader", "modules", []) + [args])))
-
-        return await utils.answer(
-            message, (
-                f"<emoji id=5206607081334906820>✔️</emoji> <b>Модуль \"<code>{module_name}</code>\" загружен</b>"
-                if args != "all"
-                else f"✅ <b>Загружено <code>{count}</code> из <code>{len(modules)}</code> модулей</b>"
-            )
-        )
 
     async def loadmod_cmd(self, app: Client, message: types.Message):
         """Загрузить модуль по файлу. Использование: <реплай на файл>"""
@@ -200,31 +109,27 @@ class LoaderMod(loader.Module):
 
     async def unloadmod_cmd(self, app: Client, message: types.Message, args: str):
         """Выгрузить модуль. Использование: unloadmod <название модуля>"""
-        if not (module_name := self.all_modules.unload_module(args)):
-            return await utils.answer(
-                message, "<emoji id=5210952531676504517>❌</emoji> <b>Неверное название модуля</b>")
+        module_name, text = utils.get_module_name(message)
+        
+        if module_name.lower() in ["loader", "help", "tester", "updater", "information", "executor", "settings", "terminal"]:
+        	return await utils.answer(message, f"<emoji id=5210952531676504517>❌</emoji> <code>{module_name}</code> <b>является системным модулем, его выгрузить невозможно!</b>")
+        
+        self.all_modules.unload_module(module_name)
 
         return await utils.answer(
-            message, f"<emoji id=5206607081334906820>✔️</emoji> <b>Модуль \"<code>{module_name}</code>\" выгружен</b>")
+            message, f"<emoji id=5206607081334906820>✔️</emoji> <b>Модуль \"<code>{module_name}</code>\" выгружен</b>\n\n{text}")
 
-    async def dlrepo_cmd(self, app: Client, message: types.Message, args: str):
-        """Установить репозиторий с модулями. Использование: dlrepo <ссылка на репозиторий или reset>"""
+    async def ml_cmd(self, app: Client, message: types.Message, args: str):
+        """Поделится модулем"""
+    	
         if not args:
             return await utils.answer(
                 message, "<emoji id=5210952531676504517>❌</emoji> <b>Нет аргументов</b>")
-
-        if args == "reset":
-            self.db.set(
-                "sh1t-ub.loader", "repo",
-                "https://github.com/sh1tn3t/sub-modules"
-            )
-            return await utils.answer(
-                message, "<emoji id=5206607081334906820>✔️</emoji> <b>Ссылка на репозиторий была сброшена</b>")
-
-        if not await get_git_raw_link(args):
-            return await utils.answer(
-                message, "<emoji id=5210952531676504517>❌</emoji> <b>Ссылка указана неверно</b>")
-
-        self.db.set("sh1t-ub.loader", "repo", args)
-        return await utils.answer(
-            message, "<emoji id=5206607081334906820>✔️</emoji> <b>Ссылка на репозиторий установлена</b>")
+        
+        module_name, text = utils.get_module_name(message)
+        
+        try:
+            await utils.answer(message, chat_id=message.chat.id, document=True, response=f'sh1t-ub/modules/{module_name}.py', caption = f'<emoji id=5433653135799228968>📁</emoji> <b>Файл</b> <code>{module_name}</code>\n\n<emoji id=5463408862499466706>😎</emoji> <code>.loadmod</code> <b>в ответ на это сообщение, чтобы установить модуль</b>\n\n{text}')
+        except Exception as e:
+            logging.error(e)
+            await utils.answer(message, "<emoji id=5210952531676504517>❌</emoji> <b>Модуль не найден</b>")

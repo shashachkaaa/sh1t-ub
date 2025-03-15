@@ -110,7 +110,7 @@ def get_other_info():
     )
 
 
-@loader.module("Information", "sh1tn3t")
+@loader.module("Information", "sh1tn3t | shashachkaaa")
 class InformationMod(loader.Module):
     """Информация о юзерботе"""
 

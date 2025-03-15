@@ -14,11 +14,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import logging
+
 from pyrogram import Client, types
 from .. import loader, utils, __version__
 
 
-@loader.module(name="Help", author="sh1tn3t")
+@loader.module(name="Help", author="sh1tn3t | shashachkaaa")
 class HelpMod(loader.Module):
     """Помощь по командам юзербота"""
 
@@ -46,39 +48,41 @@ class HelpMod(loader.Module):
                 text += f"\n<b>📦 {module.name}</b>: " + commands + inline
 
             return await utils.answer(
-                message, f"<b>🛠 Всего модулей: {len(self.all_modules.modules)}</b>\n"
+                message, f"<b><emoji id=5463408862499466706>😎</emoji> Всего модулей: {len(self.all_modules.modules)}</b>\n"
                          f"{text}"
             )
-
-        if not (module := self.all_modules.get_module(args)):
-            return await utils.answer(
-                message, "<emoji id=5210952531676504517>❌</emoji> <b>Такого модуля нет</b>")
+        
+        module_name, text = utils.get_module_name_in_modules(self, message)
+        logging.info(module_name)
+        
+        module = self.all_modules.get_module(module_name.lower())
+        	
 
         prefix = self.db.get("sh1t-ub.loader", "prefixes", ["."])[0]
         bot_username = (await self.bot.me()).username
 
         command_descriptions = "\n".join(
-            f"👉 <code>{prefix + command}</code>\n"
+            f"<emoji id=5471978009449731768>👉</emoji> <code>{prefix + command}</code>\n"
             f"    ╰ {module.command_handlers[command].__doc__ or 'Нет описания для команды'}"
             for command in module.command_handlers
         )
         inline_descriptions = "\n".join(
-            f"👉 <code>@{bot_username + ' ' + command}</code>\n"
+            f"<emoji id=5471978009449731768>👉</emoji> <code>@{bot_username + ' ' + command}</code>\n"
             f"    ╰ {module.inline_handlers[command].__doc__ or 'Нет описания для команды'}"
             for command in module.inline_handlers
         )
 
         header = (
-            f"<b>🖥 Модуль:</b> <code>{module.name}</code>\n" + (
-                f"<b>👨🏿‍💻 Автор:</b> <code>{module.author}</code>\n" if module.author else ""
+            f"<b><emoji id=5463408862499466706>😎</emoji> Модуль:</b> <code>{module.name}</code>\n" + (
+                f"<b><emoji id=5237922302070367159>❤️</emoji> Автор:</b> <code>{module.author}</code>\n" if module.author else ""
             ) + (
-                f"<b>🔢 Версия:</b> <code>{module.version}</code>\n" if module.version else ""
+                f"<b><emoji id=5226929552319594190>0️⃣</emoji> Версия:</b> <code>{module.version}</code>\n" if module.version else ""
             ) + (
-                f"\n<b>📄 Описание:</b>\n"
+                f"\n<b><emoji id=5197269100878907942>✍️</emoji> Описание:</b>\n"
                 f"    ╰ {module.__doc__ or 'Нет описания для модуля'}\n\n"
             )
         )
 
         return await utils.answer(
-            message, header + command_descriptions + "\n" + inline_descriptions
+            message, header + command_descriptions + "\n" + inline_descriptions + f"\n\n{text}"
         )

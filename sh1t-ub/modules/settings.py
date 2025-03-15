@@ -18,7 +18,7 @@ from pyrogram import Client, types
 from .. import loader, utils
 
 
-@loader.module(name="Settings", author="sh1tn3t")
+@loader.module(name="Settings", author="sh1tn3t | shashachkaaa")
 class SettingsMod(loader.Module):
     """Настройки бота"""
 
