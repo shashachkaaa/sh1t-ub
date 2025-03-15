@@ -35,7 +35,7 @@ class TesterMod(loader.Module):
         if args and args.isdigit():
             count = int(args)
         
-        await utils.answer(message, f"<emoji id=5463408862499466706>😎</emoji> {num}")
+        await utils.answer(message, f"<emoji id=5463408862499466706>😎</emoji>")
         
         for _ in range(count):
             start = datetime.now()
