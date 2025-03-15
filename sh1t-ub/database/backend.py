@@ -32,25 +32,22 @@ class CloudDatabase:
             self.find_data_chat())
 
     async def find_data_chat(self):
-        """Информация о чате с данными"""
-        if not self.data_chat:
-            chat = None
+       """Информация о чате с данными"""
+       if not self.data_chat:
+           # Используем async for для итерации по диалогам
+           async for dialog in self._app.get_dialogs():
+               if (
+                   dialog.chat.title == f"sh1t-{self._me.id}-data"
+                   and dialog.chat.type == "supergroup"
+               ):
+                   self.data_chat = dialog.chat  # <-- Сохраняем найденный чат
+                   break
 
-        # Используем async for для итерации по диалогам
-            async for dialog in self._app.get_dialogs():
-                if (
-                    dialog.chat.title == f"sh1t-{self._me.id}-data"
-                    and dialog.chat.type == "supergroup"
-                ):
-                    chat = dialog.chat
-                    break
+        # Если чат не найден, создаем новый
+           if not self.data_chat:
+               self.data_chat = await self._app.create_supergroup(f"sh1t-{self._me.id}-data")
 
-            if not chat:
-                self.data_chat = await self._app.create_supergroup(f"sh1t-{self._me.id}-data")
-            else:
-                self.data_chat = chat
-
-        return self.data_chat
+       return self.data_chat
 
     async def save_data(self, message: Union[types.Message, str]):
         """Сохранить данные в чат"""
