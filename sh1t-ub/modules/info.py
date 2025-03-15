@@ -128,8 +128,7 @@ class InformationMod(loader.Module):
     @loader.on_bot(lambda self, app, inline_query: True)
     async def info_inline_handler(self, app: Client, inline_query: InlineQuery):
         """Информация о юзерботе. Использование: @bot info"""
-        message = InputTextMessageContent(
-            get_info_message(self.all_modules.me))
+        message = InputTextMessageContent(message_text=get_info_message(self.all_modules.me))
 
         return await inline_query.answer(
             [
