@@ -18,7 +18,7 @@ __authors__ = "Sh1tN3t - https://github.com/sh1tn3t https://t.me/sh1tn3t"
 __license__ = "GNU Affero General Public License v3.0"
 __copyright__ = "Copyright (C) 2020-2021 Sh1tN3t"
 
-__version__ = "1.5.3.1"
+__version__ = "2.0.0"
 
 
 change_log = """
