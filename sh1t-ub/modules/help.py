@@ -69,10 +69,10 @@ class HelpMod(loader.Module):
         )
 
         header = (
-            f"<b>🖥 Модуль:</b> <b>{module.name}</b>\n" + (
-                f"<b>👨🏿‍💻 Автор:</b> <b>{module.author}</b>\n" if module.author else ""
+            f"<b>🖥 Модуль:</b> <code>{module.name}</code>\n" + (
+                f"<b>👨🏿‍💻 Автор:</b> <code>{module.author}</code>\n" if module.author else ""
             ) + (
-                f"<b>🔢 Версия:</b> <b>{module.version}</b>\n" if module.version else ""
+                f"<b>🔢 Версия:</b> <code>{module.version}</code>\n" if module.version else ""
             ) + (
                 f"\n<b>📄 Описание:</b>\n"
                 f"    ╰ {module.__doc__ or 'Нет описания для модуля'}\n\n"
