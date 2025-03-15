@@ -14,6 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import asyncio
 import logging
 import re
 
@@ -40,6 +41,7 @@ class TokenManager(Item):
                 await self._app.unblock_user("@BotFather")
 
             await conv.get_response()
+            await asyncio.sleep(5)
 
             await conv.ask("/newbot")
             response = await conv.get_response()
@@ -51,12 +53,14 @@ class TokenManager(Item):
                 logging.error("Произошла ошибка при создании бота. Ответ @BotFather:")
                 logging.error(response.text)
                 return False
+            await asyncio.sleep(5)
 
-            await conv.ask(f"Sh1tN3t UserBot of {utils.get_display_name(self._all_modules.me)[:45]}")
+            await conv.ask(f"Sh1tUB of {utils.get_display_name(self._all_modules.me)[:45]}")
             await conv.get_response()
 
             bot_username = f"sh1tub_{utils.random_id(6)}_bot"
-
+            await asyncio.sleep(5)
+            
             await conv.ask(bot_username)
             response = await conv.get_response()
 
@@ -69,18 +73,23 @@ class TokenManager(Item):
 
             await conv.ask("/setuserpic")
             await conv.get_response()
-
+            await asyncio.sleep(5)
+            
             await conv.ask("@" + bot_username)
             await conv.get_response()
+            await asyncio.sleep(5)
 
             await conv.ask_media("bot_avatar.png", media_type="photo")
             await conv.get_response()
+            await asyncio.sleep(5)
 
             await conv.ask("/setinline")
             await conv.get_response()
+            await asyncio.sleep(5)
 
             await conv.ask("@" + bot_username)
             await conv.get_response()
+            await asyncio.sleep(5)
 
             await conv.ask("sh1t-команда")
             await conv.get_response()
