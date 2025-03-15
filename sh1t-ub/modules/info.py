@@ -54,7 +54,7 @@ def humanize(num: float, suffix: str = "B") -> str:
 def get_info_message(me: types.User):
     mention = f"<a href=\"tg://user?id={me.id}\">{utils.get_display_name(me)}</a>"
     return (
-        f"😎 <b>Sh1tN3t UserBot</b>\n\n"
+        f"😎 <b>Sh1t UserBot (fork by shashachkaaa)</b>\n\n"
         f"🔢 <b>Версия</b>: v{__version__}\n"
         f"👤 <b>Владелец</b>: {mention}"
     )
