@@ -22,7 +22,7 @@ GIT_REGEX = re.compile(
 )
 
 @loader.module(name="Updater", author="shashachkaaa")
-class LoaderMod(loader.Module):
+class UpdaterMod(loader.Module):
     """Управление юзерботом"""
     
     async def restart_cmd(self, app: Client, message: types.Message, update: bool = False):
