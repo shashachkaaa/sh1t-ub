@@ -3,6 +3,7 @@ import re
 import sys
 import asyncio
 import atexit
+import logging
 
 from git import Repo
 from git.exc import GitCommandError
