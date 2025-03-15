@@ -1,8 +1,21 @@
 import os
 import sys
 
+from git import Repo
+from git.exc import GitCommandError
+
 from pyrogram import Client, types
 from .. import loader, utils
+
+VALID_URL = r"[-[\]_.~:/?#@!$&'()*+,;%<=>a-zA-Z0-9]+"
+VALID_PIP_PACKAGES = re.compile(
+    r"^\s*# required:(?: ?)((?:{url} )*(?:{url}))\s*$".format(url=VALID_URL),
+    re.MULTILINE,
+)
+GIT_REGEX = re.compile(
+    r"^https?://github\.com((?:/[a-z0-9-]+){2})(?:/tree/([a-z0-9-]+)((?:/[a-z0-9-]+)*))?/?$",
+    flags=re.IGNORECASE,
+)
 
 @loader.module(name="Updater", author="shashachkaaa")
 class LoaderMod(loader.Module):
