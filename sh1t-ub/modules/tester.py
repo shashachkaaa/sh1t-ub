@@ -16,6 +16,7 @@
 
 import io
 import logging
+import time
 
 from datetime import datetime
 from pyrogram import Client, types
@@ -29,28 +30,11 @@ class TesterMod(loader.Module):
 
     async def ping_cmd(self, app: Client, message: types.Message, args: str):
         """Пингует"""
-        count = 5
-        ping_msg, ping_data = [], []
-
-        if args and args.isdigit():
-            count = int(args)
-        
-        await utils.answer(message, f"<emoji id=5463408862499466706>😎</emoji>")
-        
-        for _ in range(count):
-            start = datetime.now()
-            ms = (datetime.now() - start).microseconds / 1000
-            msg = await app.send_message("me", "ping?")
-            ping_data.append(ms)
-            ping_msg.append(msg)
-
-        ping = sum(ping_data) / len(ping_data)
-
-        await utils.answer(message, f"<emoji id=5456140674028019486>⚡️</emoji> <b>Пинг:</b> <code>{str(ping)[:6]}</code> ms")
-        for msg in ping_msg:
-            await msg.delete()
-
-        return
+        a = time.time()
+        m = await utils.answer(message, f"<emoji id=5463408862499466706>😎</emoji>")
+        if m:
+        	b = time.time()
+        	return await utils.answer(message, f'<emoji id=5463408862499466706>😎</emoji> Пинг: <b>{round((b - a) * 1000, 3)}</b> ms)
 
     async def logs_cmd(self, app: Client, message: types.Message, args: str):
         """Отправляет логи. Использование: logs <уровень>"""
