@@ -55,7 +55,7 @@ class HelpMod(loader.Module):
                 message, "<emoji id=5210952531676504517>❌</emoji> <b>Такого модуля нет</b>")
 
         prefix = self.db.get("sh1t-ub.loader", "prefixes", ["."])[0]
-        bot_username = (await self.bot.me).username
+        bot_username = (await self.bot.me()).username
 
         command_descriptions = "\n".join(
             f"👉 <code>{prefix + command}</code>\n"
