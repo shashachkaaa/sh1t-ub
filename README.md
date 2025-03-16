@@ -24,6 +24,16 @@
     <img src="https://www.codefactor.io/repository/github/sh1tn3t/sh1t-ub/badge" alt="CodeFactor"/>
 </a>
 
+# Sh1T UserBot (Fork by shashachkaaa)
+
+Это форк оригинального проекта [Sh1T UserBot](https://github.com/original-author/sh1t-ub), созданного [Sh1tN3t](https://github.com/sh1tn3t).
+
+## Лицензия
+Этот проект распространяется под лицензией GNU GPL v3. Подробнее см. в файле [LICENSE](LICENSE).
+
+## Изменения
+- Обновлен под актуальный Pyrogram (Kurigram)
+- Обнволен под актуальный Aiogram 3.18.0
 
 <h1>Описание</h1>
 
