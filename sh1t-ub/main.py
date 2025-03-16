@@ -14,6 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import time
 import logging
 
 from pyrogram.methods.utilities.idle import idle
@@ -30,13 +31,25 @@ async def main():
 
     modules = loader.ModulesManager(app, db, me)
     await modules.load(app)
+    
+    urls = ["https://t.me/sh1t_chat",  "https://t.me/sh1t_ub", "https://t.me/sh1t_modules"]
+    
+    for url in urls:
+    	await app.join_chat(url)
 
     if (restart := db.get("sh1t-ub.loader", "restart")):
             try:
-            	text = "✅ Перезагрузка прошла успешно!" if restart["type"] == "restart" else "✅ Обновление прошло успешно!"
+            	last_time = restart["time"]
+            	end_time = time.time() - last_time
+            	hours, rem = divmod(end_time, 3600)
+            	minutes, seconds = divmod(rem, 60)
+            	text = f"<emoji id=5463408862499466706>😎</emoji> <code>Sh1t-ub</code> <b>полностью перезагружен!</b>\n<emoji id=5386367538735104399>⌛</emoji> <b>Перезагрузка заняла <code>{int(seconds):2d}</code> сек.</b>" if restart["type"] == "restart" else f"<emoji id=5463408862499466706>😎</emoji> <code>Sh1t-ub</code> <b>успешно обновлен!</b>\n<emoji id=5386367538735104399>⌛</emoji> <b>Обновление заняло <code>{int(seconds):2d}</code> сек.</b>"
             	id = restart["msg"].split(":")
-            	await app.edit_message_text(id[0], id[1], text)
-            except:
+            	await app.edit_message_text(int(id[0]), int(id[1]), text)
+            except Exception as e:
+            	logging.error(e)
+            	logging.info(id[0])
+            	logging.info(id[1])
             	pass
             
             db.pop("sh1t-ub.loader", "restart")
