@@ -77,7 +77,7 @@ apt update && apt upgrade -y && apt install -y openssl git python3 python3-pip
 После этого клонировать репозиторий и установить зависимости:
 
 <pre lang="bash">
-git clone https://github.com/sh1tn3t/sh1t-ub && cd sh1t-ub
+git clone https://github.com/shashachkaaa/sh1t-ub.git && cd sh1t-ub
 pip3 install -r requirements.txt
 </pre>
 
@@ -96,14 +96,15 @@ python3 -m sh1t-ub
 $ python3 -m sh1t-ub --help
 usage: sh1t-ub [--help] [--log-level LOGLEVEL]
 
-Телеграм юзербот разработанный sh1tn3t‘ом
+Телеграм юзербот разработанный sh1tn3t‘ом & shashachkaaa
 
 optional arguments:
   --help, -h            Показать это сообщение
   --log-level LOGLEVEL, -lvl LOGLEVEL
                         Установить уровень логирования. Доступно: NOTSET, DEBUG, INFO, WARNING, ERROR, CRITICAL или число от 0 до 50
 
-Канал: @sh1tub
+Канал оригинального sh1t-ub: @sh1tub
+Канал форка: @sh1t_ub
 </pre>
 
 <h1>Пример модуля</h1>
@@ -134,5 +135,6 @@ class ExampleMod(loader.Module):
 <h1>Ссылки</h1>
 
 <ul>
-    <li><a href="https://github.com/sh1tn3t/sub-modules">Репозиторий модулей</a></li>
+    <li><a href="https://github.com/sh1tn3t/sub-modules">Репозиторий модулей</a> (возможны баги в использовании модулей поскольку они не обновляются и могут не поддерживатся новой версией Sh1T-ub)</li>
+    <li><a href="https://t.me/sh1t_modules">Актуальные модули</a></li>
 </ul>
