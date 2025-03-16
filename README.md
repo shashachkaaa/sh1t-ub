@@ -1,13 +1,13 @@
 <p align="center">
     <img src="https://my.fl1yd.su/sh1t-ub_nobg.png">
     <br>
-    <b>Sh1tN3t UserBot (sh1t-ub)</b> — крутой юзербот написанный на <a href="https://github.com/pyrogram/pyrogram">Pyrogram</a>
+    <b>Sh1T UB (fork)</b> — крутой юзербот написанный на <a href="https://github.com/pyrogram/pyrogram">Pyrogram</a>
     <br>
-    <a href="https://t.me/sh1tub">Канал с обновлениями</a>
+    <a href="https://t.me/sh1t_ub">Канал с обновлениями</a>
     •
-    <a href="https://t.me/sh1tubchat">Чат поддержки</a>
+    <a href="https://t.me/sh1t_chat">Чат поддержки</a>
     •
-    <a href="https://t.me/submodules">Канал с модулями</a>
+    <a href="https://t.me/sh1t_nodules">Канал с модулями</a>
 </p>
 
 <a href="https://github.com/shashachkaaa/sh1t-ub/stargazers">
