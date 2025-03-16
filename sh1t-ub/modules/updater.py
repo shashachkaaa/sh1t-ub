@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import time
 import asyncio
 import atexit
 import logging
@@ -38,7 +39,8 @@ class UpdaterMod(loader.Module):
         self.db.set(
             "sh1t-ub.loader", "restart", {
                 "msg": f"{message.chat.id}:{message.id}",
-                "type": "restart" if not update else "update"
+                "type": "restart" if not update else "update",
+                "time": time.time()
             }
         )
 
