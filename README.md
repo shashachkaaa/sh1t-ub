@@ -10,18 +10,18 @@
     <a href="https://t.me/submodules">Канал с модулями</a>
 </p>
 
-<a href="https://github.com/sh1tn3t/sh1t-ub/stargazers">
-    <img src="https://badgen.net/github/stars/sh1tn3t/sh1t-ub" alt="stars">
+<a href="https://github.com/shashachkaaa/sh1t-ub/stargazers">
+    <img src="https://badgen.net/github/stars/shashachkaaa/sh1t-ub" alt="stars">
 </a>
-<a href="https://github.com/sh1tn3t/sh1t-ub/watchers">
-    <img src="https://badgen.net/github/watchers/sh1tn3t/sh1t-ub" alt="watchers">
+<a href="https://github.com/shashachkaaa/sh1t-ub/watchers">
+    <img src="https://badgen.net/github/watchers/shashachkaaa/sh1t-ub" alt="watchers">
 </a>
-<a href="https://github.com/sh1tn3t/sh1t-ub/commits/main">
-    <img src="https://badgen.net/github/commits/sh1tn3t/sh1t-ub/main" alt="commits">
+<a href="https://github.com/shashachkaaa/sh1t-ub/commits/main">
+    <img src="https://badgen.net/github/commits/shashachkaaa/sh1t-ub/main" alt="commits">
 </a>
 <br>
-<a href="https://www.codefactor.io/repository/github/sh1tn3t/sh1t-ub">
-    <img src="https://www.codefactor.io/repository/github/sh1tn3t/sh1t-ub/badge" alt="CodeFactor"/>
+<a href="https://www.codefactor.io/repository/github/shashahchkaaa/sh1t-ub">
+    <img src="https://www.codefactor.io/repository/github/shashachkaaa/sh1t-ub/badge" alt="CodeFactor"/>
 </a>
 
 # Sh1T UserBot (Fork by shashachkaaa)
