@@ -26,7 +26,7 @@
 
 # Sh1T UserBot (Fork by shashachkaaa)
 
-Это форк оригинального проекта [Sh1T UserBot](https://github.com/original-author/sh1t-ub), созданного [Sh1tN3t](https://github.com/sh1tn3t).
+Это форк оригинального проекта [Sh1t-ub](https://github.com/sh1tn3t/sh1t-ub), созданного [Sh1tN3t](https://github.com/sh1tn3t).
 
 ## Лицензия
 Этот проект распространяется под лицензией GNU GPL v3. Подробнее см. в файле [LICENSE](LICENSE).
