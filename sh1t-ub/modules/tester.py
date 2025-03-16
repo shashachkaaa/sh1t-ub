@@ -21,7 +21,7 @@ import time
 from datetime import datetime
 from pyrogram import Client, types
 
-from .. import loader, utils, logger
+from .. import loader, utils, logger, __start_time__
 
 
 @loader.module(name="Tester", author="sh1tn3t | shashachkaaa")
@@ -34,7 +34,10 @@ class TesterMod(loader.Module):
         m = await utils.answer(message, f"<emoji id=5463408862499466706>😎</emoji>")
         if m:
         	b = time.time()
-        	return await utils.answer(message, f'<emoji id=5463408862499466706>😎</emoji> Пинг: <b>{round((b - a) * 1000, 3)}</b> ms')
+        	end_time = time.time() - __start_time__
+        	hours, rem = divmod(end_time, 3600)
+        	minutes, seconds = divmod(rem, 60)
+        	return await utils.answer(message, f'<emoji id=5463408862499466706>😎</emoji> Пинг: <b>{round((b - a) * 1000, 3)}</b> ms\n<emoji id=5431449001532594346>⚡️</emoji> Прошло времени с момента запуска: <b>{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}</b>')
 
     async def logs_cmd(self, app: Client, message: types.Message, args: str):
         """Отправляет логи. Использование: logs <уровень>"""
@@ -55,6 +58,6 @@ class TesterMod(loader.Module):
 
         await message.delete()
         return await utils.answer(
-            message, logs, doc=True, quote=False,
+            message, logs, document=True, quote=False,
             caption=f"📤 Sh1t-UB Логи с {lvl} ({logging.getLevelName(lvl)}) уровнем"
         )
