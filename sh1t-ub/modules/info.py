@@ -16,6 +16,7 @@
 
 import configparser
 
+import time
 import psutil
 import platform
 
@@ -30,7 +31,7 @@ from aiogram.types import (
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from pyrogram import Client, types
-from .. import loader, utils, __version__
+from .. import loader, utils, __version__, __start_time__
 
 
 INFO_MARKUP = InlineKeyboardBuilder()
@@ -53,11 +54,14 @@ def humanize(num: float, suffix: str = "B") -> str:
 
 def get_info_message(me: types.User):
     mention = f"<a href=\"tg://user?id={me.id}\">{utils.get_display_name(me)}</a>"
-    return (
-        f"😎 <b>Sh1t UserBot (fork by shashachkaaa)</b>\n\n"
-        f"🔢 <b>Версия</b>: v{__version__}\n"
-        f"👤 <b>Владелец</b>: {mention}"
-    )
+    end_time = time.time() - __start_time__
+    hours, rem = divmod(end_time, 3600)
+    minutes, seconds = divmod(rem, 60)
+    return f"""😎 <b>Sh1T UserBot</b>
+
+👤 <b>Владелец</b>: {mention}
+⚡️ <b>Прошло времени с момента запуска:</b> <code>{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}</code>
+🔢 <b>Версия</b>: v{__version__}"""
 
 
 def get_cpu_info():
