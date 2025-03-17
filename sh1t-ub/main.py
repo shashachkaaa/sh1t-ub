@@ -32,10 +32,7 @@ async def main():
     modules = loader.ModulesManager(app, db, me)
     await modules.load(app)
     
-    urls = ["https://t.me/sh1t_chat",  "https://t.me/sh1t_ub", "https://t.me/sh1t_modules"]
-    
-    for url in urls:
-    	await app.join_chat(url)
+    await app.join_chat("https://t.me/Sh1T_ub")
 
     if (restart := db.get("sh1t-ub.loader", "restart")):
             try:

@@ -18,6 +18,8 @@ import random
 import string
 import logging
 import os
+import ast
+import time
 
 import asyncio
 import functools
@@ -27,12 +29,26 @@ from pyrogram.file_id import FileId, PHOTO_TYPES
 from fuzzywuzzy import process
 
 from types import FunctionType
-from typing import Any, List, Literal, Tuple, Union
+from typing import Any, List, Literal, Tuple, Union, Optional
 
 from . import database
 
 import os
 from fuzzywuzzy import process
+
+def find_mod_class_in_file(file_path: str) -> Optional[str]:
+    """Ищет класс, имя которого заканчивается на 'Mod', в файле."""
+    
+    with open(f"sh1t-ub/modules/{file_path}.py", "r", encoding="utf-8") as file:
+        file_content = file.read()
+
+    tree = ast.parse(file_content)
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ClassDef) and node.name.endswith("Mod"):
+            return node.name
+
+    return None
 
 def get_module_name_in_modules(self, message: Message):
     module_name = message.text.split()[1]

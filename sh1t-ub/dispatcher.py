@@ -14,7 +14,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import html
 import logging
+import traceback
 
 from inspect import getfullargspec, iscoroutine
 from types import FunctionType
@@ -89,7 +91,7 @@ class DispatcherManager:
             logging.exception(error)
             await utils.answer(
                 message, f"<emoji id=5210952531676504517>❌</emoji> <b>Произошла ошибка при выполнении команды.</b>\n"
-                         f"<b>Запрос:</b> <code>{message.text}</code>\n"
+                         f"<b>Запрос:</b> <code>{message.text}</code>\n<b>Ошибка:\n<code>{html.escape(traceback.format_exc())}</code></b>"
                          f"<b>Подробности можно найти в</b> <code>{prefix}logs</code>"
             )
 

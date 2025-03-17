@@ -16,14 +16,11 @@
 
 import os
 import sys
-
 import re
 import subprocess
-
 import logging
 import string
 import random
-
 import requests
 import inspect
 
@@ -410,7 +407,9 @@ class ModulesManager:
         if is_replace:
             module = module_name
         else:
-            if not (module := self.get_module(module_name)):
+            module_name = utils.find_mod_class_in_file(module_name)
+            if not (module := self.get_module(module_name.replace("Mod", ""))):
+                logging.error(f"Модуль {module_name} не найден для выгрузки.")
                 return False
 
             if (get_module := inspect.getmodule(module)).__spec__.origin != "<string>":
@@ -438,15 +437,36 @@ class ModulesManager:
             set(self.callback_handlers.items()) ^ set(module.callback_handlers.items())
         )
 
+        logging.info(f"Модуль {module.name} успешно выгружен.")
         return module.name
 
+#    def get_module(self, name: str, by_commands_too: bool = False) -> Union[Module, None]:
+#        """Ищет модуль по названию или по команде"""
+#        if (
+#            module := list(
+#                filter(
+#                    lambda module: module.name.lower(
+#                    ) == name.lower(), self.modules
+#                )
+#            )
+#        ):
+#            return module[0]
+
+#        if by_commands_too and name in self.command_handlers:
+#            return self.command_handlers[name].__self__
+#        
+#        return None
     def get_module(self, name: str, by_commands_too: bool = False) -> Union[Module, None]:
         """Ищет модуль по названию или по команде"""
+        print(f"Ищем модуль: {name}")
+        print("Список модулей:")
+        for module in self.modules:
+            print(f"- {module.name}")  # Предполагаем, что у модуля есть атрибут name
+
         if (
             module := list(
                 filter(
-                    lambda module: module.name.lower(
-                    ) == name.lower(), self.modules
+                    lambda module: module.name.lower() == name.lower(), self.modules
                 )
             )
         ):
