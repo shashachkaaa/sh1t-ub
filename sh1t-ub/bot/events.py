@@ -60,6 +60,37 @@ class Events(Item):
 
     async def _inline_handler(self, inline_query: InlineQuery) -> InlineQuery:
         """Обработчик инлайн-хендеров"""
+        
+        if inline_query.from_user.id != self._all_modules.me.id:
+            return await inline_query.answer(
+                [
+                    InlineQueryResultArticle(
+                        id=utils.random_id(),
+                        title="🚫 Доступ запрещен",
+                        input_message_content=InputTextMessageContent(
+                            message_text=(
+                                "😎 Это - <code>Sh1t-ub</code>. Отличный юзербот с большим количеством команд и модулей к нему.\n\n"
+                                "❓ <b>Как установить?</b>\n"
+                                "Для <b>установки</b> воспользуйтесь <a href='https://github.com/shashachkaaa/sh1t-ub'>сайтом</a>.\n\n"
+                                "🌟 <b>Особенности:</b>\n"
+                                "- Удобное управление через команды.\n"
+                                "- Поддержка инлайн-режима.\n"
+                                "- Модульная архитектура для расширения функционала.\n"
+                                "- Регулярные обновления и поддержка.\n\n"
+                                "📚 <b>Документация:</b>\n"
+                                "Подробнее о возможностях и настройке можно узнать в <a href='https://github.com/shashachkaaa/sh1t-ub'>документации</a>.\n\n"
+                                "🛠 <b>Поддержка:</b>\n"
+                                "Если у вас возникли вопросы, обратитесь в <a href='https://t.me/sh1t_chat'>чат поддержки</a>."
+                            ),
+                            parse_mode="HTML",
+                            disable_web_page_preview=True
+                        ),
+                        description="Узнайте больше о Sh1t-ub и как его установить.",
+                        thumb_url="https://api.fl1yd.su/emoji/1f6ab.png"
+                    )
+                ], cache_time=0
+            )
+
         if not (query := inline_query.query):
             commands = ""
             for command, func in self._all_modules.inline_handlers.items():
@@ -67,7 +98,8 @@ class Events(Item):
                     commands += f"\n💬 <code>@{(await self.bot.me()).username} {command}</code>"
 
             message = InputTextMessageContent(
-                message_text=f"👇 <b>Доступные команды</b>\n{commands}"
+                message_text=f"👇 <b>Доступные команды</b>\n{commands}",
+                parse_mode="HTML"
             )
 
             return await inline_query.answer(
