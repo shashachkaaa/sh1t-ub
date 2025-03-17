@@ -90,10 +90,7 @@ class DispatcherManager:
         except Exception as error:
             logging.exception(error)
             await utils.answer(
-                message, f"<emoji id=5210952531676504517>❌</emoji> <b>Произошла ошибка при выполнении команды.</b>\n"
-                         f"<b>Запрос:</b> <code>{message.text}</code>\n<b>Ошибка:\n<code>{html.escape(traceback.format_exc())}</code></b>"
-                         f"<b>Подробности можно найти в</b> <code>{prefix}logs</code>"
-            )
+                message, f"<emoji id=5210952531676504517>❌</emoji> <b>Произошла ошибка при выполнении команды: </b> <code>{message.text}</code>\n<emoji id=5440660757194744323>‼️</emoji> <b>Ошибка:</b>\n<code>{html.escape(traceback.format_exc())}</code>")
 
         return message
 
