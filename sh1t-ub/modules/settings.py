@@ -31,7 +31,7 @@ class SettingsMod(loader.Module):
         self.db.set("sh1t-ub.loader", "prefixes", list(set(args)))
         prefixes = ", ".join(f"<code>{prefix}</code>" for prefix in args)
         return await utils.answer(
-            message, f"<emoji id=5206607081334906820>✔️</emoji> </b>Префикс был изменен на</b> «</code>{prefixes}</code>»")
+            message, f"<emoji id=5206607081334906820>✔️</emoji> <b>Префикс был изменен на</b> «{prefixes}»")
 
     async def addalias_cmd(self, app: Client, message: types.Message, args: str):
         """Добавить алиас. Использование: addalias <новый алиас> <команда>"""

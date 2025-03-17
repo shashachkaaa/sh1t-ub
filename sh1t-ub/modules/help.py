@@ -27,25 +27,40 @@ class HelpMod(loader.Module):
     async def help_cmd(self, app: Client, message: types.Message, args: str):
         """Список всех модулей"""
         if not args:
-            text = ""
+            system_modules = ["loader", "help", "tester", "updater", "information", "executor", "settings", "terminal"]
+            
+            system_modules_list = []
+            user_modules_list = []
+            
             for module in self.all_modules.modules:
-                commands = inline = ""
+                if module.name.lower() in system_modules:
+                    system_modules_list.append(module)
+                else:
+                    user_modules_list.append(module)
+            
+            sorted_modules = system_modules_list + user_modules_list
+            
+            text = ""
+            for module in sorted_modules:
+                commands = []
+                inline_commands = []
 
-                commands += " <b>|</b> ".join(
-                    f"<code>{command}</code>" for command in module.command_handlers
-                )
+                if module.command_handlers:
+                    commands.extend(
+                        f"<code>{command}</code>" for command in module.command_handlers
+                    )
 
                 if module.inline_handlers:
-                    if commands:
-                        inline += " <b>|| 🎹</b>: "
+                    inline_commands.extend(
+                        f"🎹 <code>{inline_command}</code>" for inline_command in module.inline_handlers
+                    )
+
+                all_commands = commands + inline_commands
+                if all_commands:
+                    if module.name.lower() in system_modules:
+                        text += f"\n<b>▪ {module.name}</b>: (" + " <b>|</b> ".join(all_commands) + ")"
                     else:
-                        inline += "<b>🎹</b>: "
-
-                inline += " <b>|</b> ".join(
-                    f"<code>{inline_command}</code>" for inline_command in module.inline_handlers
-                )
-
-                text += f"\n<b>📦 {module.name}</b>: " + commands + inline
+                        text += f"\n<b>▫ {module.name}</b>: (" + " <b>|</b> ".join(all_commands) + ")"
 
             return await utils.answer(
                 message, f"<b><emoji id=5463408862499466706>😎</emoji> Всего модулей: {len(self.all_modules.modules)}</b>\n"
@@ -56,8 +71,7 @@ class HelpMod(loader.Module):
         logging.info(module_name)
         
         module = self.all_modules.get_module(module_name.lower())
-        	
-
+        
         prefix = self.db.get("sh1t-ub.loader", "prefixes", ["."])[0]
         bot_username = (await self.bot.me()).username
 
