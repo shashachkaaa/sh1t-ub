@@ -29,10 +29,15 @@ class HelpMod(loader.Module):
         if not args:
             system_modules = ["loader", "help", "tester", "updater", "information", "executor", "settings", "terminal"]
             
+            hide_mods = self.db.get("help", "hide_mods", [])
+            
             system_modules_list = []
             user_modules_list = []
             
             for module in self.all_modules.modules:
+                if module.name.lower() in hide_mods:
+                    continue
+                
                 if module.name.lower() in system_modules:
                     system_modules_list.append(module)
                 else:
@@ -63,7 +68,7 @@ class HelpMod(loader.Module):
                         text += f"\n<b>▫ {module.name}</b>: (" + " <b>|</b> ".join(all_commands) + ")"
 
             return await utils.answer(
-                message, f"<b><emoji id=5463408862499466706>😎</emoji> Всего модулей: {len(self.all_modules.modules)}</b>\n"
+                message, f"<b><emoji id=5463408862499466706>😎</emoji> Всего <code>{len(self.all_modules.modules)}</code> модулей, <code>{len(hide_mods)}</code> скрыто</b>\n"
                          f"{text}"
             )
         
@@ -71,6 +76,11 @@ class HelpMod(loader.Module):
         logging.info(module_name)
         
         module = self.all_modules.get_module(module_name.lower())
+      
+        if not module:
+            return await utils.answer(
+                message, f"<emoji id=5210952531676504517>❌</emoji> <b>Модуль</b> «<code>{module_name}</code>» <b>не найден</b>"
+            )
         
         prefix = self.db.get("sh1t-ub.loader", "prefixes", ["."])[0]
         bot_username = (await self.bot.me()).username
@@ -80,6 +90,7 @@ class HelpMod(loader.Module):
             f"    ╰ {module.command_handlers[command].__doc__ or 'Нет описания для команды'}"
             for command in module.command_handlers
         )
+        
         inline_descriptions = "\n".join(
             f"<emoji id=5471978009449731768>👉</emoji> <code>@{bot_username + ' ' + command}</code>\n"
             f"    ╰ {module.inline_handlers[command].__doc__ or 'Нет описания для команды'}"

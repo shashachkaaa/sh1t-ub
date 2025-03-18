@@ -37,7 +37,7 @@ class SettingsMod(loader.Module):
         """Добавить алиас. Использование: addalias <новый алиас> <команда>"""
         if not (args := args.lower().split(maxsplit=1)):
             return await utils.answer(
-                message, "emoji id=5436113877181941026>❓</emoji> <b>Какой алиас нужно добавить?</b>")
+                message, "<emoji id=5436113877181941026>❓</emoji> <b>Какой алиас нужно добавить?</b>")
 
         if len(args) != 2:
             return await utils.answer(
@@ -88,5 +88,73 @@ class SettingsMod(loader.Module):
             message, "<emoji id=5956561916573782596>📄</emoji> <b>Список всех алиасов:</b>\n" + "\n".join(
                 f"<emoji id=4972281662894244560>🛑</emoji> <code>{alias}</code> ➜ <code>{command}</code>"
                 for alias, command in aliases.items()
+            )
+        )
+
+    async def hidemod_cmd(self, app: Client, message: types.Message, args: str):
+        """Скрыть модуль. Использование: hidemod <название модуля>"""
+        if not args:
+            return await utils.answer(
+                message, "<emoji id=5436113877181941026>❓</emoji> <b>Какой модуль нужно скрыть?</b>"
+            )
+
+        module_name = args.lower()
+        hide_mods = self.db.get("help", "hide_mods", [])
+        
+        all_modules = [module.name.lower() for module in self.all_modules.modules]
+        
+        module_name, text = utils.find_closest_module_name(module_name, all_modules)
+        
+        if module_name in hide_mods:
+            return await utils.answer(
+                message, f"<emoji id=5210952531676504517>❌</emoji> <b>Модуль</b> «<code>{module_name}</code>» <b>уже скрыт</b>\n\n{text}"
+            )
+
+        hide_mods.append(module_name)
+        self.db.set("help", "hide_mods", hide_mods)
+
+        return await utils.answer(
+            message, f"<emoji id=5206607081334906820>✔️</emoji> <b>Модуль</b> «<code>{module_name}</code>» <b>скрыт</b>\n\n{text}"
+        )
+
+    async def showmod_cmd(self, app: Client, message: types.Message, args: str):
+        """Показать скрытый модуль. Использование: showmod <название модуля>"""
+        if not args:
+            return await utils.answer(
+                message, "<emoji id=5436113877181941026>❓</emoji> <b>Какой модуль нужно показать?</b>"
+            )
+
+        module_name = args.lower()
+        hide_mods = self.db.get("help", "hide_mods", [])
+        
+        all_modules = [module.name.lower() for module in self.all_modules.modules]
+        
+        module_name, text = utils.find_closest_module_name(module_name, all_modules)
+        
+        if module_name not in hide_mods:
+            return await utils.answer(
+                message, f"<emoji id=5210952531676504517>❌</emoji> <b>Модуль</b> «<code>{module_name}</code>» <b>не скрыт</b>\n\n{text}"
+            )
+
+        hide_mods.remove(module_name)
+        self.db.set("help", "hide_mods", hide_mods)
+
+        return await utils.answer(
+            message, f"<emoji id=5206607081334906820>✔️</emoji> <b>Модуль</b> «<code>{module_name}</code>» <b>теперь виден</b>\n\n{text}"
+        )
+
+    async def hiddenmods_cmd(self, app: Client, message: types.Message):
+        """Показать список скрытых модулей. Использование: hiddenmods"""
+        hide_mods = self.db.get("help", "hide_mods", [])
+        
+        if not hide_mods:
+            return await utils.answer(
+                message, "<emoji id=5463044060862244442>🤷‍♂</emoji> <b>Скрытых модулей нет</b>"
+            )
+
+        return await utils.answer(
+            message, "<emoji id=5956561916573782596>📄</emoji> <b>Список скрытых модулей:</b>\n" + "\n".join(
+                f"<emoji id=4972281662894244560>🛑</emoji> <code>{module}</code>"
+                for module in hide_mods
             )
         )

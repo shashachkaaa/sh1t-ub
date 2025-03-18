@@ -51,9 +51,41 @@ class LoaderMod(loader.Module):
             return await utils.answer(
                 message, "<emoji id=5210952531676504517>❌</emoji> <b>Не удалось загрузить модуль. Подробности смотри в логах</b>"
             )
+            
+        module = self.all_modules.get_module(module_name.lower())
+        if not module:
+            return await utils.answer(
+                message, f"<emoji id=5210952531676504517>❌</emoji> <b>Модуль</b> «<code>{module_name}</code>» <b>не найден</b>"
+            )
+
+        prefix = self.db.get("sh1t-ub.loader", "prefixes", ["."])[0]
+        bot_username = (await self.bot.me()).username
+
+        command_descriptions = "\n".join(
+            f"<emoji id=5471978009449731768>👉</emoji> <code>{prefix + command}</code>\n"
+            f"    ╰ {module.command_handlers[command].__doc__ or 'Нет описания для команды'}"
+            for command in module.command_handlers
+        )
+        
+        inline_descriptions = "\n".join(
+            f"<emoji id=5471978009449731768>👉</emoji> <code>@{bot_username + ' ' + command}</code>\n"
+            f"    ╰ {module.inline_handlers[command].__doc__ or 'Нет описания для команды'}"
+            for command in module.inline_handlers
+        )
+
+        header = (
+            (
+                f"<b><emoji id=5237922302070367159>❤️</emoji> Автор:</b> <code>{module.author}</code>\n" if module.author else ""
+            ) + (
+                f"<b><emoji id=5226929552319594190>0️⃣</emoji> Версия:</b> <code>{module.version}</code>\n" if module.version else ""
+            ) + (
+                f"\n<b><emoji id=5197269100878907942>✍️</emoji> Описание:</b>\n"
+                f"    ╰ {module.__doc__ or 'Нет описания для модуля'}\n\n"
+            )
+        )
 
         return await utils.answer(
-            message, f"<emoji id=5206607081334906820>✔️</emoji> <b>Модуль \"<code>{module_name}</code>\" загружен</b>"
+            message, f"<emoji id=5206607081334906820>✔️</emoji> <b>Модуль \"<code>{module_name}</code>\" загружен</b>\n\n" + header + command_descriptions + "\n" + inline_descriptions
         )
 
     async def unloadmod_cmd(self, app: Client, message: types.Message, args: str):
