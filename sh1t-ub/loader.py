@@ -32,7 +32,8 @@ from typing import Union, List, Dict, Any
 from types import FunctionType, LambdaType
 
 from pyrogram import Client, types, filters
-from . import dispatcher, utils, database, bot
+from .db import db
+from . import dispatcher, utils, bot
 
 VALID_URL = r"[-[\]_.~:/?#@!$&'()*+,;%<=>a-zA-Z0-9]+"
 VALID_PIP_PACKAGES = re.compile(
@@ -224,7 +225,7 @@ class ModulesManager:
     def __init__(
         self,
         app: Client,
-        db: database.Database,
+        db: db,
         me: types.User
     ) -> None:
         self.modules: List[Module] = []
@@ -439,29 +440,9 @@ class ModulesManager:
 
         logging.info(f"Модуль {module.name} успешно выгружен.")
         return module.name
-
-#    def get_module(self, name: str, by_commands_too: bool = False) -> Union[Module, None]:
-#        """Ищет модуль по названию или по команде"""
-#        if (
-#            module := list(
-#                filter(
-#                    lambda module: module.name.lower(
-#                    ) == name.lower(), self.modules
-#                )
-#            )
-#        ):
-#            return module[0]
-
-#        if by_commands_too and name in self.command_handlers:
-#            return self.command_handlers[name].__self__
-#        
-#        return None
+        
     def get_module(self, name: str, by_commands_too: bool = False) -> Union[Module, None]:
         """Ищет модуль по названию или по команде"""
-        print(f"Ищем модуль: {name}")
-        print("Список модулей:")
-        for module in self.modules:
-            print(f"- {module.name}")  # Предполагаем, что у модуля есть атрибут name
 
         if (
             module := list(

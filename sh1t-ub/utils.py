@@ -31,10 +31,40 @@ from fuzzywuzzy import process
 from types import FunctionType
 from typing import Any, List, Literal, Tuple, Union, Optional
 
-from . import database
+from .db import db
 
 import os
 from fuzzywuzzy import process
+
+def find_closest_module_name(module_name: str, module_list: List[str]) -> Tuple[str, str]:
+    """Ищет ближайшее название модуля к введенному аргументу.
+
+    Параметры:
+        module_name (``str``):
+            Введенное название модуля
+
+        module_list (``List[str]``):
+            Список всех модулей
+
+    Возвращает:
+        Tuple[str, str]: Ближайшее название модуля и текст с предупреждением
+    """
+    matches = process.extract(module_name, module_list, limit=3)
+    
+    best_module_name = []
+    
+    if matches[0][1] < 100:
+        for best in matches:
+            best_module_name.append(best[0])
+    
+    try:
+        module_name = best_module_name[0]
+        text = '<emoji id=5312383351217201533>⚠️</emoji> <b>Точного совпадения не найдено, поэтому применен ближайший результат</b>'
+    except:
+        module_name = matches[0][0]
+        text = ''
+    
+    return module_name, text
 
 def find_mod_class_in_file(file_path: str) -> Optional[str]:
     """Ищет класс, имя которого заканчивается на 'Mod', в файле."""
@@ -115,7 +145,7 @@ def get_full_command(message: Message) -> Union[
             Сообщение
     """
     message.text = str(message.text or message.caption)
-    prefixes = database.db.get("sh1t-ub.loader", "prefixes", ["."])
+    prefixes = db.get("sh1t-ub.loader", "prefixes", ["."])
 
     for prefix in prefixes:
         if (

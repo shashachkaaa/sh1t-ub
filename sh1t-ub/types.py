@@ -19,7 +19,7 @@ from pyrogram import Client, types
 from types import FunctionType
 from typing import Union, List, Dict, Any
 
-from . import database
+from .db import db
 
 
 class Module:
@@ -47,7 +47,7 @@ class ModulesManager:
         self._local_modules_path: str
 
         self.me: types.User
-        self._db: database.Database
+        self._db: db
 
         self.aliases: Dict[str, str]
 

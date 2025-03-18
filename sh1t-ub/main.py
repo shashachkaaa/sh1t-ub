@@ -18,7 +18,8 @@ import time
 import logging
 
 from pyrogram.methods.utilities.idle import idle
-from . import auth, database, loader
+from .db import db
+from . import auth, loader
 
 
 async def main():
@@ -26,13 +27,12 @@ async def main():
     me, app = await auth.Auth().authorize()
     await app.initialize()
 
-    db = database.db
-    db.init_cloud(app, me)
+    #db.init_cloud(app, me)
 
     modules = loader.ModulesManager(app, db, me)
     await modules.load(app)
     
-    await app.join_chat("https://t.me/Sh1T_ub")
+    await app.join_chat("https://t.me/sh1t-ub")
 
     if (restart := db.get("sh1t-ub.loader", "restart")):
             try:
@@ -49,7 +49,7 @@ async def main():
             	logging.info(id[1])
             	pass
             
-            db.pop("sh1t-ub.loader", "restart")
+            db.drop_table("sh1t-ub.loader", "restart")
 
     prefix = db.get("sh1t-ub.loader", "prefixes", ["."])[0]
     bot_info = await modules.bot_manager.bot.me()
