@@ -17,7 +17,7 @@
 import logging
 
 from pyrogram import Client, types
-from .. import loader, utils, __version__
+from .. import loader, utils, __version__, __system_mod__
 
 
 @loader.module(name="Help", author="sh1tn3t | shashachkaaa")

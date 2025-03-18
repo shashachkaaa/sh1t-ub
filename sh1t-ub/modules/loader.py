@@ -1,12 +1,12 @@
 import os
 import logging
 from pyrogram import Client, types
-from .. import loader, utils
+from .. import loader, utils, __system_mod__
 
 @loader.module(name="Loader", author="sh1tn3t | shashachkaaa")
 class LoaderMod(loader.Module):
     """Загрузчик модулей"""
-
+    
     async def loadmod_cmd(self, app: Client, message: types.Message):
         """Загрузить модуль по файлу. Использование: <реплай на файл>"""
         reply = message.reply_to_message
@@ -87,12 +87,12 @@ class LoaderMod(loader.Module):
         return await utils.answer(
             message, f"<emoji id=5206607081334906820>✔️</emoji> <b>Модуль \"<code>{module_name}</code>\" загружен</b>\n\n" + header + command_descriptions + "\n" + inline_descriptions
         )
-
+    
     async def unloadmod_cmd(self, app: Client, message: types.Message, args: str):
         """Выгрузить модуль. Использование: unloadmod <название модуля>"""
         module_name, text = utils.get_module_name(message)
         
-        if module_name.lower() in ["loader", "help", "tester", "updater", "information", "executor", "settings", "terminal"]:
+        if module_name.lower() in __system_mod__:
             return await utils.answer(
                 message, f"<emoji id=5210952531676504517>❌</emoji> <code>{module_name}</code> <b>является системным модулем, его выгрузить невозможно!</b>"
             )
