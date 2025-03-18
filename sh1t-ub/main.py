@@ -32,7 +32,10 @@ async def main():
     modules = loader.ModulesManager(app, db, me)
     await modules.load(app)
     
-    await app.join_chat("https://t.me/sh1t-ub")
+    try:
+    	await app.join_chat("https://t.me/sh1t-ub")
+    except:
+    	pass
 
     if (restart := db.get("sh1t-ub.loader", "restart")):
             try:
