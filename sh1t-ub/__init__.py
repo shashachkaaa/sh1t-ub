@@ -22,6 +22,7 @@ __copyright__ = "Copyright (C) 2020-2021 Sh1tN3t"
 
 __version__ = "2.0.0"
 __start_time__ = time.time()
+__system_mod__ = ["loader", "help", "tester", "updater", "information", "executor", "settings", "terminal"]
 
 
 change_log = """

@@ -218,7 +218,6 @@ def on_bot(custom_filters: LambdaType) -> FunctionType:
         return func
     return decorator
 
-
 class ModulesManager:
     """Менеджер модулей"""
 
