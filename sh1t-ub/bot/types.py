@@ -25,8 +25,8 @@ from aiogram.types import (
 
 from types import FunctionType
 from typing import Union
-
-from .. import database, types
+from ..db import db
+from .. import types
 
 
 class Item:
@@ -35,7 +35,7 @@ class Item:
     def __init__(self) -> None:
         """Инициализация класса"""
         self._all_modules: types.ModulesManager = None
-        self._db: database.Database = None
+        self._db: db = None
         self._app: Client = None
 
     async def _check_filters(

@@ -12,8 +12,8 @@ from typing import Union, NoReturn
 
 from .events import Events
 from .token_manager import TokenManager
-
-from .. import database, types, __version__
+from ..db import db
+from .. import types, __version__
 
 
 class BotManager(
@@ -25,7 +25,7 @@ class BotManager(
     def __init__(
         self,
         app: Client,
-        db: database.Database,
+        db: db,
         all_modules: types.ModulesManager
     ) -> None:
         """Инициализация класса
