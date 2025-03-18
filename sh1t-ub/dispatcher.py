@@ -75,8 +75,12 @@ class DispatcherManager:
 
     async def _handle_message(self, app: Client, message: types.Message) -> types.Message:
         """Обработчик сообщений"""
+        
         await self._handle_watchers(app, message)
         await self._handle_other_handlers(app, message)
+        
+        if not message.outgoing:
+        	return message
 
         prefix, command, args = utils.get_full_command(message)
         if not (command or args):
