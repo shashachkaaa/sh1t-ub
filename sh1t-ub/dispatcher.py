@@ -67,11 +67,12 @@ class DispatcherManager:
         
         ids = self.db.get("sh1t-ub.loader", "allow", [])
         
-        try:
-        	if message.from_user.id not in ids:
+        if not message.outgoing:
+        	try:
+        		if message.from_user.id not in ids:
+        			return message
+        	except:
         		return message
-        except:
-        	pass
 
         prefix, command, args = utils.get_full_command(message)
         if not (command or args):
