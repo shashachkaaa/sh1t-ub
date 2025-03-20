@@ -24,6 +24,7 @@ from types import FunctionType
 from pyrogram import Client, types, filters
 from pyrogram.handlers import MessageHandler
 
+from .db import db
 from . import loader, utils
 
 async def check_filters(func: FunctionType, app: Client, message: types.Message) -> bool:
@@ -44,6 +45,7 @@ class DispatcherManager:
     def __init__(self, app: Client, modules: "loader.ModulesManager") -> None:
         self.app = app
         self.modules = modules
+        self.db = db
 
     async def load(self) -> bool:
         """Загружает менеджер диспетчера"""
@@ -63,8 +65,13 @@ class DispatcherManager:
         await self._handle_watchers(app, message)
         await self._handle_other_handlers(app, message)
         
-        if not message.outgoing:
-        	return message
+        ids = self.db.get("sh1t-ub.loader", "allow", [])
+        
+        try:
+        	if message.from_user.id not in ids:
+        		return message
+        except:
+        	pass
 
         prefix, command, args = utils.get_full_command(message)
         if not (command or args):
