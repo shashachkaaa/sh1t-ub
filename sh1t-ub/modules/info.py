@@ -141,10 +141,7 @@ class InformationMod(loader.Module):
                     title="Информация",
                     input_message_content=message,
                     reply_markup=(
-                        INFO_SERVER_MARKUP.as_markup()
-                        if inline_query.from_user.id == self.all_modules.me.id
-                        else None
-                    ),
+                        INFO_SERVER_MARKUP.as_markup()),
                     thumb_url="https://api.fl1yd.su/emoji/2139-fe0f.png",
                 )
             ], cache_time=0
@@ -153,9 +150,11 @@ class InformationMod(loader.Module):
     @loader.on_bot(lambda self, app, call: call.data == "info")
     async def info_callback_handler(self, app: Client, call: CallbackQuery):
         """Информация о юзерботе"""
+        
+        ids = self.db.get("sh1t-ub.loader", "allow", [])
         if call.from_user.id != self.all_modules.me.id:
-            return await call.answer(
-                "❗ А эта кнопочка не для тебя!", True)
+            if call.from_user.id not in ids:
+                return await call.answer("❗ А эта кнопочка не для тебя!", True)
 
         await call.answer()
 
@@ -168,9 +167,11 @@ class InformationMod(loader.Module):
     @loader.on_bot(lambda self, app, call: call.data == "info_server")
     async def info_server_callback_handler(self, app: Client, call: CallbackQuery):
         """Информация о сервере"""
+        
+        ids = self.db.get("sh1t-ub.loader", "allow", [])
         if call.from_user.id != self.all_modules.me.id:
-            return await call.answer(
-                "❗ А эта кнопочка не для тебя!", True)
+            if call.from_user.id not in ids:
+                return await call.answer("❗ А эта кнопочка не для тебя!", True)
 
         await call.answer()
 

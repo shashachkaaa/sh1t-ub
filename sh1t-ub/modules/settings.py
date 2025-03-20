@@ -14,9 +14,28 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import logging
+
+from aiogram.types import (
+    InlineQuery,
+    InputTextMessageContent,
+    InlineQueryResultArticle,
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+    CallbackQuery
+)
+from aiogram.utils.keyboard import InlineKeyboardBuilder
+
 from pyrogram import Client, types
 from .. import loader, utils
 
+def kb(id):
+	b1 = InlineKeyboardButton(text="✅ Подтвердить", callback_data=f"giveaccess_{id}")
+	b2 = InlineKeyboardButton(text="❌ Отмена", callback_data=f"cancel_{id}")
+	kb = InlineKeyboardBuilder()
+	kb.row(b1, b2)
+	
+	return kb.as_markup()
 
 @loader.module(name="Settings", author="sh1tn3t | shashachkaaa")
 class SettingsMod(loader.Module):
@@ -158,3 +177,135 @@ class SettingsMod(loader.Module):
                 for module in hide_mods
             )
         )
+    
+    async def ownerlist_cmd(self, app: Client, message: types.Message):
+    	"""Список пользователей, имеющих доступ к юзерботу"""
+    	
+    	ids = self.db.get("sh1t-ub.loader", "allow", [])
+    	
+    	if not ids:
+    		return await utils.answer(message, f"<emoji id=5210956306952758910>👀</emoji> <b>Никто не имеет доступ к вашему юзерботу!</b>")
+    	
+    	make = str.maketrans({
+    		'1': '<emoji id=5381828389663431280>1️⃣</emoji>',
+    		'2': '<emoji id=5382051178207007027>2️⃣</emoji>',
+    		'3': '<emoji id=5379910025340802255>3️⃣</emoji>',
+    		'4': '<emoji id=5388624247696412237>4️⃣</emoji>',
+    		'5': '<emoji id=5390859675094766802>5️⃣</emoji>',
+    		'6': '<emoji id=5388691197646625260>6️⃣</emoji>',
+    		'7': '<emoji id=5391035158868547187>7️⃣</emoji>',
+    		'8': '<emoji id=5388710159927236114>8️⃣</emoji>',
+    		'9': '<emoji id=5391071623140889606>9️⃣</emoji>',
+    		'0': '<emoji id=5381817669425058178>0️⃣</emoji>'
+    	})
+    	
+    	text = ""
+    	num = 0
+    	
+    	for id in ids:
+    		num += 1
+    		try:
+    			name = (await app.get_users(id)).first_name
+    		except:
+    			name = "Пользователь"
+    		
+    		text += f"{num} <a href='tg://user?id={id}'>{name}</a>\n"
+    	
+    	text = text.translate(make)
+    	
+    	await utils.answer(message, f"<emoji id=5251203410396458957>🛡</emoji> <b>Всего <code>{num}</code> пользователей имеют доступ к вашему юзерботу</b>\n\n{text}")
+    
+    async def ownerrm_cmd(self, app: Client, message: types.Message, args: str):
+    	"""Отнять доступ к юзерботу"""
+    	r = message.reply_to_message
+    	
+    	if not r:
+    		if not args:
+    			return await utils.answer(message, f"<emoji id=5210952531676504517>❌</emoji> <b>Необходим ответ на сообщение, ID или username пользователя!</b>")
+    		else:
+    			args = args.split()
+    			if isinstance(args[0], str):
+    				id = args[0].replace("@", "")
+    				id = (await app.get_users(id)).id
+    				name = (await app.get_users(id)).first_name
+    			else:
+    				id = int(args[0])
+    				name = (await app.get_users(id)).first_name
+    	else:
+    		id = r.from_user.id
+    		name = r.from_user.first_name
+    	
+    	if self.all_modules.me.id == id:
+    		return await utils.answer(message, "<emoji id=5210952531676504517>❌</emoji> <b>Данную команду невозможно выполнить на самом себе!</b>")
+    	
+    	ids = self.db.get("sh1t-ub.loader", "allow", [])
+    	if id not in ids:
+    		return await utils.answer(message, f"<emoji id=5210952531676504517>❌</emoji> <b>У пользователя нет доступа к юзерботу!</b>")
+    	
+    	ids.remove(id)
+    	self.db.set("sh1t-ub.loader", "allow", ids)
+    	
+    	await utils.answer(message, f"<emoji id=5206607081334906820>✔️</emoji> <b>Права на юзербота у <a href='tg://user?id={id}'>{name}</a> успешно отняты!</b>")
+    	
+
+    async def owneradd_cmd(self, app: Client, message: types.Message):
+    	"""Предоставить доступ к юзерботу"""
+    	
+    	r = message.reply_to_message
+    	
+    	if not r:
+    		return await utils.answer(message, f"<emoji id=5210952531676504517>❌</emoji> <b>Необходим ответ на сообщение</b>")
+    	
+    	if self.all_modules.me.id == r.from_user.id:
+    		return await utils.answer(message, "<emoji id=5210952531676504517>❌</emoji> <b>Данную команду невозможно выполнить на самом себе!</b>")
+    	
+    	bot_results = await app.get_inline_bot_results((await self.bot.me()).username, f"owneradd {r.from_user.id}")
+    	
+    	await app.send_inline_bot_result(message.chat.id, bot_results.query_id, bot_results.results[0].id)
+    	return await message.delete()
+    
+    @loader.on_bot(lambda self, app, inline_query: True)
+    async def owneradd_inline_handler(self, app: Client, inline_query: InlineQuery):
+    	"""Предоставить доступ к юзерботу"""
+    	
+    	args = inline_query.query.split()
+    	
+    	if len(args) < 2:
+    		return await inline_query.answer([], cache_time=0)
+    	
+    	message_id = utils.random_id()
+    	id = int(args[1])
+    	name = (await app.get_users(id)).first_name
+    	
+    	message = InputTextMessageContent(message_text=f"🛡 <b>Вы уверены что хотите предоставить доступ к юзерботу <a href='tg://user?id={id}'>{name}</a>?</b> Он(а) получит доступ ко всем командам вашего Sh1T-ub, это может повлечь за собой плохие последствия. Решение может быть принято на ваш страх и риск!")
+    	
+    	msg = await inline_query.answer([InlineQueryResultArticle(id=message_id, title="🛡 Отправить подтверждение", input_message_content=message, reply_markup=kb(id))], cache_time=0)
+    	
+    @loader.on_bot(lambda self, app, call: call.data.startswith("giveaccess_"))
+    async def giveaccess_callback_handler(self, app: Client, call: CallbackQuery):
+    	"""Подтверждение"""
+    	
+    	cd = call.data.split("_")
+    	id = int(cd[1])
+    	
+    	if call.from_user.id != self.all_modules.me.id:
+    		return await call.answer("❗ Эта кнопка не ваша!", True)
+
+    	ids = self.db.get("sh1t-ub.loader", "allow", [])
+    	ids.append(id)
+    	self.db.set("sh1t-ub.loader", "allow", ids)
+    	name = (await app.get_users(id)).first_name
+    	await self.bot.edit_message_text(inline_message_id=call.inline_message_id, text=f"✅ <b>Доступ <a href='tg://user?id={id}'>{name}</a> предоставлен!</b>")
+    
+    @loader.on_bot(lambda self, app, call: call.data.startswith("cancel"))
+    async def cancel_callback_handler(self, app: Client, call: CallbackQuery):
+    	"""Отказ"""
+    	
+    	cd = call.data.split("_")
+    	id = int(cd[1])
+    	
+    	if call.from_user.id != self.all_modules.me.id:
+    		return await call.answer("❗ Эта кнопка не ваша!", True)
+    		
+    	name = (await app.get_users(id)).first_name
+    	await self.bot.edit_message_text(inline_message_id=call.inline_message_id, text=f"❌ <b>Отказано в доступе для <a href='tg://user?id={id}'>{name}</a>!</b>")
